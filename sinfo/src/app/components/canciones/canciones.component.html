@@ -1,0 +1,13 @@
+<div class="songs-container">
+  <h2>Top Canciones</h2>
+  <div *ngIf="topTracks.length === 0">No hay canciones disponibles.</div>
+  <ul>
+    <li *ngFor="let song of topTracks">
+      <img [src]="song.album.images[0]?.url" alt="Portada del álbum">
+      <div class="info">
+        <strong>{{ song.name }}</strong>
+        <span>{{ song.artists[0]?.name }}</span>
+      </div>
+    </li>
+  </ul>
+</div>

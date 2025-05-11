@@ -1,0 +1,16 @@
+<div class="header">
+  <button (click)="despligueMenu()">☰</button>
+  <h2>SINFO</h2>
+  <button (click)="toggleUserOptions()">Usuario</button>
+</div>
+
+<app-menu *ngIf="showMenu" />
+<app-menu *ngIf="showMenu" (closeMenu)="despligueMenu()" />
+
+<app-opciones-usuario *ngIf="showUserOptions" />
+
+<div class="top-charts">
+  <div class="chart">Top 1</div>
+  <div class="chart">Top 2</div>
+  <div class="chart">Top 3</div>
+</div>

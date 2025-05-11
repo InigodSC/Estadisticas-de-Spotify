@@ -1,0 +1,40 @@
+.menu-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  background-color: #121212;
+  color: #1DB954;
+  z-index: 1000;
+  padding-top: 40px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.menu-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-container li {
+  padding: 15px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #1DB954;
+}
+
+.menu-container li:hover {
+  background-color: #1DB954;
+  color: #121212;
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #1DB954;
+  cursor: pointer;
+}

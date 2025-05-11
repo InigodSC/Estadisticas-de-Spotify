@@ -1,0 +1,31 @@
+.songs-container {
+  padding: 20px;
+  color: #1DB954;
+}
+
+.songs-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.songs-container li {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  background-color: #222;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.songs-container img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 15px;
+  border-radius: 4px;
+}
+
+.songs-container .info {
+  display: flex;
+  flex-direction: column;
+}
