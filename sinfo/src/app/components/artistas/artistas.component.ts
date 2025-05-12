@@ -20,10 +20,12 @@ export class ArtistasComponent implements OnInit {
   ngOnInit(): void {
     this.spotifyService.getTopArtists().subscribe({
       next: (res) => {
-        this.topArtists = res.items;
-        this.filteredArtists = res.items;
+        console.log('Artistas recibidos:', res); // 👈 verificación en consola
+        this.topArtists = res;
+        this.filteredArtists = res;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al obtener artistas:', err);
         this.topArtists = [];
         this.filteredArtists = [];
       }

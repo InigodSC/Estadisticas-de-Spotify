@@ -47,3 +47,8 @@ li img {
   object-fit: cover;
   margin-right: 15px;
 }
+
+.info {
+  display: flex;
+  flex-direction: column;
+}

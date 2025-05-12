@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class SpotifyService {
 
-  private readonly baseUrl = 'http://localhost:8000'; // Cambia este puerto si tu backend usa otro
+  private readonly baseUrl = 'http://localhost:8888'; // Cambia este puerto si tu backend usa otro
 
   constructor(private http: HttpClient) {}
 
@@ -20,10 +20,10 @@ export class SpotifyService {
   }
 
   getTopArtists(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/top_artists`);
+  return this.http.get(`${this.baseUrl}/top_artists?limit=10`);
   }
 
   getTopTracks(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/top_tracks`);
+    return this.http.get(`${this.baseUrl}/top_tracks?limit=10`);
   }
 }

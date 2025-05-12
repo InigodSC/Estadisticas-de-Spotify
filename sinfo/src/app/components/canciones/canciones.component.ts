@@ -13,11 +13,16 @@ export class CancionesComponent implements OnInit {
   private spotifyService = inject(SpotifyService);
 
   topTracks: any[] = [];
-
   ngOnInit(): void {
     this.spotifyService.getTopTracks().subscribe({
-      next: (res) => this.topTracks = res.items,
-      error: () => this.topTracks = []
+      next: (res) => {
+        console.log('Canciones recibidas:', res);  // 👈 debug en consola
+        this.topTracks = res;
+      },
+      error: (err) => {
+        console.error('Error al obtener canciones:', err);
+        this.topTracks = [];
+      }
     });
   }
 }

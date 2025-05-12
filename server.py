@@ -3,9 +3,18 @@ import datetime as dt
 import uvicorn
 from fastapi import Request, HTTPException, Query
 from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 import requests, base64, urllib.parse
 
 app = fastapi.FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 CLIENT_ID = "10975615f3b34ac09a9c8c9a1d64642a"
 CLIENT_SECRET = "c2cfab340b9a4a82a436f1ac90d1fafa"
