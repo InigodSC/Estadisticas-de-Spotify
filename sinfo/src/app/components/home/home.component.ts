@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { MenuComponent } from '../menu/menu.component';
 import { OpcionesUsuarioComponent } from '../opciones-usuario/opciones-usuario.component';
 import { SpotifyService } from '../../services/spotify.service';
-import { CancionesComponent } from '../canciones/canciones.component';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +32,6 @@ export class HomeComponent implements OnInit{
   ngOnInit(): void {
     this.spotifyService.getUserPic().subscribe({
       next: (res) => {
-        console.log('Imagen de perfil:', res.url);
         this.foto = res.url;
       },
       error: () => {
@@ -42,7 +40,6 @@ export class HomeComponent implements OnInit{
     });
     this.spotifyService.getUserName().subscribe({
       next:(res)=>{
-        console.log('Nombre de usuario: ',res.nombre);
         this.nombre = res.nombre;
       },
       error:()=>{
