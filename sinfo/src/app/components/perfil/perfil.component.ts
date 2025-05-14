@@ -11,26 +11,26 @@ import { CommonModule } from '@angular/common';
 export class PerfilComponent implements OnInit {
   private spotifyService = inject(SpotifyService);
 
-  userName: string = '';
-  userPicUrl: string = '';
+  nombre: string = '';
+  foto: string = '';
 
   ngOnInit(): void {
     this.spotifyService.getUserName().subscribe({
     next: (res) => {
       console.log('Nombre:', res.nombre);
-      this.userName = res.nombre;
+      this.nombre = res.nombre;
     },
     error: () => {
-      this.userName = 'Desconocido';
+      this.nombre = 'Desconocido';
     }
   });
     this.spotifyService.getUserPic().subscribe({
       next: (res) => {
         console.log('Imagen de perfil:', res.url);
-        this.userPicUrl = res.url;
+        this.foto = res.url;
       },
       error: () => {
-        this.userPicUrl = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';
+        this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';
       }
     });
 

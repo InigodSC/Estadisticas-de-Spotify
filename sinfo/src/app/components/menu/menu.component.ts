@@ -11,21 +11,21 @@ import { Router } from '@angular/router';
 })
 export class MenuComponent {
 
-  @Output() closeMenu = new EventEmitter<void>();
+  @Output() cerrarMenu = new EventEmitter<void>();
 
   constructor(private router: Router) {}
 
   goToArtists(): void {
     this.router.navigate(['/artistas']);
-    this.closeMenu.emit();
+    this.cerrarMenu.emit();
   }
 
   goToSongs(): void {
     this.router.navigate(['/canciones']);
-    this.closeMenu.emit();
+    this.cerrarMenu.emit();
   }
 
   close(): void {
-    this.closeMenu.emit();
+    this.cerrarMenu.emit();
   }
 }

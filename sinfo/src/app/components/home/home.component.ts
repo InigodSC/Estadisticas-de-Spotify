@@ -15,18 +15,18 @@ import { SpotifyService } from '../../services/spotify.service';
 export class HomeComponent implements OnInit{
   private spotifyService = inject(SpotifyService);
 
-  showMenu = false;
-  showUserOptions = false;
+  mostrarMenu = false;
+  mostrarOpciones = false;
 
   nombre: string = '';
   foto: string = '';
 
   despligueMenu (): void {
-    this.showMenu = !this.showMenu;
+    this.mostrarMenu = !this.mostrarMenu;
   }
 
-  toggleUserOptions(): void {
-    this.showUserOptions = !this.showUserOptions;
+  alternarOpciones(): void {
+    this.mostrarOpciones = !this.mostrarOpciones;
   }
   ngOnInit(): void {
     this.spotifyService.getUserPic().subscribe({

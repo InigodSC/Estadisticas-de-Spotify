@@ -1,14 +1,14 @@
-.songs-container {
+.canciones {
   padding: 20px;
   color: #1DB954;
 }
 
-.songs-container ul {
+.canciones ul {
   list-style: none;
   padding: 0;
 }
 
-.songs-container li {
+.canciones li {
   display: flex;
   align-items: center;
   margin: 10px 0;
@@ -17,7 +17,7 @@
   border-radius: 5px;
 }
 
-.songs-container img {
+.canciones img {
   width: 50px;
   height: 50px;
   object-fit: cover;
@@ -25,7 +25,7 @@
   border-radius: 4px;
 }
 
-.songs-container .info {
+.canciones .info {
   display: flex;
   flex-direction: column;
 }
