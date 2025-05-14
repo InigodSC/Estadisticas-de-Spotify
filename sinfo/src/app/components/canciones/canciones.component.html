@@ -6,7 +6,7 @@
       <img [src]="song.imagen" alt="Portada del álbum">
       <div class="info">
         <strong>{{ song.titulo }}</strong>
-        <span>{{ song.artistas[0] }}</span>
+        <span>{{ song.artistas.join(', ') }}</span>
         <em>{{ song.album }}</em>
       </div>
     </li>
