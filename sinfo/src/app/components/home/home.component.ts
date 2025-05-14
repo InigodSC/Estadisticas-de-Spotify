@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MenuComponent } from '../menu/menu.component';
 import { OpcionesUsuarioComponent } from '../opciones-usuario/opciones-usuario.component';
 import { SpotifyService } from '../../services/spotify.service';
+import { CancionesComponent } from '../canciones/canciones.component';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit{
 
   nombre: string = '';
   foto: string = '';
+  cancionesRecientes:any[] = []
 
   despligueMenu (): void {
     this.mostrarMenu = !this.mostrarMenu;
@@ -45,6 +47,15 @@ export class HomeComponent implements OnInit{
       },
       error:()=>{
         this.nombre='Usuario';
+      }
+    })
+
+    this.spotifyService.getRecentTracks().subscribe({
+      next:(res)=>{
+        this.cancionesRecientes = res;
+      },
+      error:()=>{
+        this.cancionesRecientes = [];
       }
     })
 

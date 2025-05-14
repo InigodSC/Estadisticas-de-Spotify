@@ -23,4 +23,7 @@ export class SpotifyService {
   getTopTracks(): Observable<any> {
     return this.http.get(`${this.baseUrl}/top_tracks?limit=10`);
   }
+  getRecentTracks(): Observable<any>{
+    return this.http.get(`${this.baseUrl}/recent_tracks?limit=10`);
+  }
 }

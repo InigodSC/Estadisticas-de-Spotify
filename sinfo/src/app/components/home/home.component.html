@@ -8,9 +8,23 @@
 <app-menu *ngIf="mostrarMenu" (cerrarMenu)="despligueMenu()" />
 
 <app-opciones-usuario *ngIf="mostrarOpciones" />
-<div class="a"><h2>Bienvenido {{nombre}}</h2></div>
+<div class="a">
+  <h2>Bienvenido {{nombre}}</h2>
+</div>
 <div class="top-charts">
-  <div class="chart">Canciones más recientes</div>
+  <div class="chart">
+    <h3>Canciones más recientes</h3>
+    <ul class="recent-songs">
+      <li *ngFor="let song of cancionesRecientes">
+        <img [src]="song.imagen" alt="Álbum" />
+        <div class="song-info">
+          <strong>{{ song.titulo }}</strong>
+          <span>{{ song.artistas[0] }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
   <div class="chart">Top 2</div>
   <div class="chart">Top 3</div>
 </div>
