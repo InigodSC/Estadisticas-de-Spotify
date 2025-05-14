@@ -1,14 +1,14 @@
-<div class="artists-container">
+<div class="artistas">
   <h2>Top Artistas</h2>
 
-  <div class="search-bar">
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar artista">
+  <div class="buscar">
+    <input type="text" [(ngModel)]="nombre" placeholder="Buscar artista">
     <button (click)="onSearch()">Buscar</button>
   </div>
 
-  <div *ngIf="filteredArtists.length === 0">No hay resultados.</div>
+  <div *ngIf="filtrados.length === 0">No hay resultados.</div>
   <ul>
-    <li *ngFor="let artist of filteredArtists">
+    <li *ngFor="let artist of filtrados">
       <img [src]="artist.imagen" alt="Imagen del artista">
       <div class="info">
         <strong>{{ artist.nombre }}</strong>

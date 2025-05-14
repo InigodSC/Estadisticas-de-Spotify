@@ -16,7 +16,7 @@ export class CancionesComponent implements OnInit {
   ngOnInit(): void {
     this.spotifyService.getTopTracks().subscribe({
       next: (res) => {
-        console.log('Canciones recibidas:', res);  // 👈 debug en consola
+        console.log('Canciones recibidas:', res);
         this.topTracks = res;
       },
       error: (err) => {
