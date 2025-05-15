@@ -26,7 +26,7 @@ URL_BASE = "https://api.spotify.com/v1"
 
 access_token = None
 
-@app.login("/login_v2")
+@app.get("/login_v2")
 def login2():
     params = {
     'client_id': CLIENT_ID,
