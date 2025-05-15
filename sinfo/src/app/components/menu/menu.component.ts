@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { SpotifyService } from '../../services/spotify.service';
 
 @Component({
   selector: 'app-menu',
@@ -10,22 +11,26 @@ import { Router } from '@angular/router';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent {
+  private spotifyService = inject(SpotifyService);
 
-  @Output() closeMenu = new EventEmitter<void>();
+  nombre:string='';
+  foto:string='';
+
+  @Output() cerrarMenu = new EventEmitter<void>();
 
   constructor(private router: Router) {}
 
   goToArtists(): void {
     this.router.navigate(['/artistas']);
-    this.closeMenu.emit();
+    this.cerrarMenu.emit();
   }
 
   goToSongs(): void {
     this.router.navigate(['/canciones']);
-    this.closeMenu.emit();
+    this.cerrarMenu.emit();
   }
 
   close(): void {
-    this.closeMenu.emit();
+    this.cerrarMenu.emit();
   }
 }

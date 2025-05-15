@@ -119,16 +119,16 @@ def getUsrPic(acs_tkn):
     response = requests.get(f"{URL_BASE}/me", headers=headers)
 
     if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="No se ha podido obtener la informacion del perfil del usuario")
+        raise HTTPException(status_code=response.status_code, detail="No se ha podido obtener la información del perfil del usuario")
 
     data = response.json()
-    
     images = data.get("images")
-    
+
     if images and len(images) > 0 and images[0].get("url"):
-        return RedirectResponse(url=images[0]["url"])
+        return {"url": images[0]["url"]}
     else:
-        return RedirectResponse(url="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png")
+        return {"url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"}
+
 
 #Devuelve los top artistas escuchados del usuario, se puede establecer el limite de artistas a mostrar y el tiempo que quieras recoger los datos
 @app.get("/top_artists/{acs_tkn}")

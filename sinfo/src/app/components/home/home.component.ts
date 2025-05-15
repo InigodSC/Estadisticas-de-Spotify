@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuComponent } from '../menu/menu.component';
 import { OpcionesUsuarioComponent } from '../opciones-usuario/opciones-usuario.component';
+import { SpotifyService } from '../../services/spotify.service';
 
 @Component({
   selector: 'app-home',
@@ -11,15 +12,49 @@ import { OpcionesUsuarioComponent } from '../opciones-usuario/opciones-usuario.c
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
-  showMenu = false;
-  showUserOptions = false;
+export class HomeComponent implements OnInit{
+  private spotifyService = inject(SpotifyService);
+
+  mostrarMenu = false;
+  mostrarOpciones = false;
+
+  nombre: string = '';
+  foto: string = '';
+  cancionesRecientes:any[] = []
 
   despligueMenu (): void {
-    this.showMenu = !this.showMenu;
+    this.mostrarMenu = !this.mostrarMenu;
   }
 
-  toggleUserOptions(): void {
-    this.showUserOptions = !this.showUserOptions;
+  alternarOpciones(): void {
+    this.mostrarOpciones = !this.mostrarOpciones;
+  }
+  ngOnInit(): void {
+    this.spotifyService.getUserPic().subscribe({
+      next: (res) => {
+        this.foto = res.url;
+      },
+      error: () => {
+        this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';
+      }
+    });
+    this.spotifyService.getUserName().subscribe({
+      next:(res)=>{
+        this.nombre = res.nombre;
+      },
+      error:()=>{
+        this.nombre='Usuario';
+      }
+    })
+
+    this.spotifyService.getRecentTracks().subscribe({
+      next:(res)=>{
+        this.cancionesRecientes = res;
+      },
+      error:()=>{
+        this.cancionesRecientes = [];
+      }
+    })
+
   }
 }

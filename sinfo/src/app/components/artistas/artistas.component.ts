@@ -14,28 +14,28 @@ export class ArtistasComponent implements OnInit {
   private spotifyService = inject(SpotifyService);
 
   topArtists: any[] = [];
-  filteredArtists: any[] = [];
-  searchTerm: string = '';
+  filtrados: any[] = [];
+  nombre: string = '';
 
   ngOnInit(): void {
     this.spotifyService.getTopArtists().subscribe({
       next: (res) => {
-        console.log('Artistas recibidos:', res); // 👈 verificación en consola
+        console.log('Artistas recibidos:', res);
         this.topArtists = res;
-        this.filteredArtists = res;
+        this.filtrados = res;
       },
       error: (err) => {
         console.error('Error al obtener artistas:', err);
         this.topArtists = [];
-        this.filteredArtists = [];
+        this.filtrados = [];
       }
     });
   }
 
   onSearch(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredArtists = this.topArtists.filter(artist =>
-      artist.name.toLowerCase().includes(term)
+    const term = this.nombre.toLowerCase();
+    this.filtrados = this.topArtists.filter(artist =>
+      artist.nombre.toLowerCase().includes(term)
     );
   }
 }

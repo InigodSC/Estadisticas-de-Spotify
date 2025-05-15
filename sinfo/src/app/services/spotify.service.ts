@@ -11,19 +11,19 @@ export class SpotifyService {
 
   constructor(private http: HttpClient) {}
 
-  getUserName(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/usr_name`);
+  getUserName(): Observable<{ nombre: string }> {
+    return this.http.get<{ nombre: string }>(`${this.baseUrl}/usr_name`);
+  } 
+  getUserPic(): Observable<{ url: string }> {
+    return this.http.get<{ url: string }>(`${this.baseUrl}/usr_pic`);
   }
-
-  getUserPic(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/usr_pic`, { responseType: 'text' });
-  }
-
   getTopArtists(): Observable<any> {
-  return this.http.get(`${this.baseUrl}/top_artists?limit=10`);
+    return this.http.get(`${this.baseUrl}/top_artists?limit=10`);
   }
-
   getTopTracks(): Observable<any> {
     return this.http.get(`${this.baseUrl}/top_tracks?limit=10`);
+  }
+  getRecentTracks(): Observable<any>{
+    return this.http.get(`${this.baseUrl}/recent_tracks?limit=10`);
   }
 }

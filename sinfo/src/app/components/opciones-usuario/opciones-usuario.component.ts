@@ -11,16 +11,16 @@ import { Router } from '@angular/router';
 })
 export class OpcionesUsuarioComponent {
 
-  @Output() closeOptions = new EventEmitter<void>();
+  @Output() cerrarOpciones = new EventEmitter<void>();
 
   constructor(private router: Router) {}
 
-  goToProfile(): void {
+  irAlPerfil(): void {
     this.router.navigate(['/perfil']);
-    this.closeOptions.emit();
+    this.cerrarOpciones.emit();
   }
 
   logout(): void {
-    window.location.href = 'http://localhost:8000/login'; // tu backend para reautenticación
+    window.location.href = 'http://localhost:8000/login';
   }
 }

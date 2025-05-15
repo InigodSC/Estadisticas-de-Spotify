@@ -1,16 +1,30 @@
 <div class="header">
   <button (click)="despligueMenu()">☰</button>
   <h2>SINFO</h2>
-  <button (click)="toggleUserOptions()">Usuario</button>
+  <button (click)="alternarOpciones()"><img [src]="foto" alt="Foto de perfil"></button>
 </div>
 
-<app-menu *ngIf="showMenu" />
-<app-menu *ngIf="showMenu" (closeMenu)="despligueMenu()" />
+<app-menu *ngIf="mostrarMenu" />
+<app-menu *ngIf="mostrarMenu" (cerrarMenu)="despligueMenu()" />
 
-<app-opciones-usuario *ngIf="showUserOptions" />
-
+<app-opciones-usuario *ngIf="mostrarOpciones" />
+<div class="a">
+  <h2>Bienvenido {{nombre}}</h2>
+</div>
 <div class="top-charts">
-  <div class="chart">Top 1</div>
-  <div class="chart">Top 2</div>
-  <div class="chart">Top 3</div>
+  <div class="chart">
+    <h3>Canciones más recientes</h3>
+    <ul class="recent-songs">
+      <li *ngFor="let song of cancionesRecientes">
+        <img [src]="song.imagen" alt="Álbum" />
+        <div class="song-info">
+          <strong>{{ song.titulo }}</strong>
+          <span>{{ song.artistas }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="chart"><h3>Canciones más escuchadas globalmente</h3></div>
+  <div class="chart"><h3>Artistas más escuchados globalmente</h3></div>
 </div>
