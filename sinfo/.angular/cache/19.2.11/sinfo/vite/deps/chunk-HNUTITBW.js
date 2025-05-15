@@ -1,9 +1,9 @@
-import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
   DOCUMENT,
   isPlatformBrowser
-} from "./chunk-NWDP3SJI.js";
+} from "./chunk-75XEW3LB.js";
 import {
+  ApplicationRef,
   Attribute,
   ChangeDetectorRef,
   DEFAULT_CURRENCY_CODE,
@@ -31,9 +31,13 @@ import {
   Renderer2,
   RendererStyleFlags2,
   RuntimeError,
+  Subject,
   TemplateRef,
   Version,
   ViewContainerRef,
+  __async,
+  __spreadProps,
+  __spreadValues,
   booleanAttribute,
   createNgModule,
   findLocaleData,
@@ -46,7 +50,6 @@ import {
   numberAttribute,
   performanceMarkFeature,
   registerLocaleData,
-  require_cjs,
   setClassMetadata,
   stringify,
   untracked,
@@ -61,15 +64,9 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-YWNTH3TK.js";
-import {
-  __spreadProps,
-  __spreadValues,
-  __toESM
-} from "./chunk-YHCV7DAQ.js";
+} from "./chunk-ZWOW2TGN.js";
 
 // node_modules/@angular/common/fesm2022/location-DpBxd_aX.mjs
-var import_rxjs = __toESM(require_cjs(), 1);
 var _DOM = null;
 function getDOM() {
   return _DOM;
@@ -300,7 +297,7 @@ var PathLocationStrategy = class _PathLocationStrategy extends LocationStrategy 
 })();
 var Location = class _Location {
   /** @internal */
-  _subject = new import_rxjs.Subject();
+  _subject = new Subject();
   /** @internal */
   _basePath;
   /** @internal */
@@ -2005,20 +2002,20 @@ var NgClass = class _NgClass {
   The NgClass directive uses the custom change detection algorithm for its inputs. The custom
   algorithm is necessary since inputs are represented as complex object or arrays that need to be
   deeply-compared.
-     This algorithm is perf-sensitive since NgClass is used very frequently and its poor performance
+      This algorithm is perf-sensitive since NgClass is used very frequently and its poor performance
   might negatively impact runtime performance of the entire change detection cycle. The design of
   this algorithm is making sure that:
   - there is no unnecessary DOM manipulation (CSS classes are added / removed from the DOM only when
   needed), even if references to bound objects change;
   - there is no memory allocation if nothing changes (even relatively modest memory allocation
   during the change detection cycle can result in GC pauses for some of the CD cycles).
-     The algorithm works by iterating over the set of bound classes, staring with [class] binding and
+      The algorithm works by iterating over the set of bound classes, staring with [class] binding and
   then going over [ngClass] binding. For each CSS class name:
   - check if it was seen before (this information is tracked in the state map) and if its value
   changed;
   - mark it as "touched" - names that are not marked are not present in the latest set of binding
   and we can remove such class name from the internal data structures;
-     After iteration over all the CSS class names we've got data structure with all the information
+      After iteration over all the CSS class names we've got data structure with all the information
   necessary to synchronize changes to the DOM - it is enough to iterate over the state map, flush
   changes to the DOM and reset internal data structures so those are ready for the next change
   detection cycle.
@@ -3682,7 +3679,6 @@ var PlatformNavigation = class _PlatformNavigation {
 })();
 
 // node_modules/@angular/common/fesm2022/common.mjs
-var import_rxjs2 = __toESM(require_cjs(), 1);
 function registerLocaleData2(data, localeId, extraData) {
   return registerLocaleData(data, localeId, extraData);
 }
@@ -3696,10 +3692,104 @@ var ViewportScroller = class _ViewportScroller {
     ɵɵdefineInjectable({
       token: _ViewportScroller,
       providedIn: "root",
-      factory: () => true ? new NullViewportScroller() : new BrowserViewportScroller(inject(DOCUMENT), window)
+      factory: () => false ? new NullViewportScroller() : new BrowserViewportScroller(inject(DOCUMENT), window)
     })
   );
 };
+var BrowserViewportScroller = class {
+  document;
+  window;
+  offset = () => [0, 0];
+  constructor(document, window2) {
+    this.document = document;
+    this.window = window2;
+  }
+  /**
+   * Configures the top offset used when scrolling to an anchor.
+   * @param offset A position in screen coordinates (a tuple with x and y values)
+   * or a function that returns the top offset position.
+   *
+   */
+  setOffset(offset) {
+    if (Array.isArray(offset)) {
+      this.offset = () => offset;
+    } else {
+      this.offset = offset;
+    }
+  }
+  /**
+   * Retrieves the current scroll position.
+   * @returns The position in screen coordinates.
+   */
+  getScrollPosition() {
+    return [this.window.scrollX, this.window.scrollY];
+  }
+  /**
+   * Sets the scroll position.
+   * @param position The new position in screen coordinates.
+   */
+  scrollToPosition(position) {
+    this.window.scrollTo(position[0], position[1]);
+  }
+  /**
+   * Scrolls to an element and attempts to focus the element.
+   *
+   * Note that the function name here is misleading in that the target string may be an ID for a
+   * non-anchor element.
+   *
+   * @param target The ID of an element or name of the anchor.
+   *
+   * @see https://html.spec.whatwg.org/#the-indicated-part-of-the-document
+   * @see https://html.spec.whatwg.org/#scroll-to-fragid
+   */
+  scrollToAnchor(target) {
+    const elSelected = findAnchorFromDocument(this.document, target);
+    if (elSelected) {
+      this.scrollToElement(elSelected);
+      elSelected.focus();
+    }
+  }
+  /**
+   * Disables automatic scroll restoration provided by the browser.
+   */
+  setHistoryScrollRestoration(scrollRestoration) {
+    this.window.history.scrollRestoration = scrollRestoration;
+  }
+  /**
+   * Scrolls to an element using the native offset and the specified offset set on this scroller.
+   *
+   * The offset can be used when we know that there is a floating header and scrolling naively to an
+   * element (ex: `scrollIntoView`) leaves the element hidden behind the floating header.
+   */
+  scrollToElement(el) {
+    const rect = el.getBoundingClientRect();
+    const left = rect.left + this.window.pageXOffset;
+    const top = rect.top + this.window.pageYOffset;
+    const offset = this.offset();
+    this.window.scrollTo(left - offset[0], top - offset[1]);
+  }
+};
+function findAnchorFromDocument(document, target) {
+  const documentResult = document.getElementById(target) || document.getElementsByName(target)[0];
+  if (documentResult) {
+    return documentResult;
+  }
+  if (typeof document.createTreeWalker === "function" && document.body && typeof document.body.attachShadow === "function") {
+    const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
+    let currentNode = treeWalker.currentNode;
+    while (currentNode) {
+      const shadowRoot = currentNode.shadowRoot;
+      if (shadowRoot) {
+        const result = shadowRoot.getElementById(target) || shadowRoot.querySelector(`[name="${target}"]`);
+        if (result) {
+          return result;
+        }
+      }
+      currentNode = treeWalker.nextNode();
+    }
+  }
+  return null;
+}
 var NullViewportScroller = class {
   /**
    * Empty implementation
@@ -4061,7 +4151,7 @@ var PreconnectLinkChecker = class _PreconnectLinkChecker {
    * @param originalNgSrc ngSrc value
    */
   assertPreconnect(rewrittenSrc, originalNgSrc) {
-    if (true) return;
+    if (false) return;
     const imgUrl = getUrl(rewrittenSrc, this.window);
     if (this.blocklist.has(imgUrl.hostname) || this.alreadySeen.has(imgUrl.origin)) return;
     this.alreadySeen.add(imgUrl.origin);
@@ -4182,9 +4272,12 @@ var OVERSIZED_IMAGE_TOLERANCE = 1e3;
 var FIXED_SRCSET_WIDTH_LIMIT = 1920;
 var FIXED_SRCSET_HEIGHT_LIMIT = 1080;
 var PLACEHOLDER_BLUR_AMOUNT = 15;
+var PLACEHOLDER_DIMENSION_LIMIT = 1e3;
 var DATA_URL_WARN_LIMIT = 4e3;
 var DATA_URL_ERROR_LIMIT = 1e4;
 var BUILT_IN_LOADERS = [imgixLoaderInfo, imageKitLoaderInfo, cloudinaryLoaderInfo, netlifyLoaderInfo];
+var PRIORITY_COUNT_THRESHOLD = 10;
+var IMGS_WITH_PRIORITY_ATTR_COUNT = 0;
 var NgOptimizedImage = class _NgOptimizedImage {
   imageLoader = inject(IMAGE_LOADER);
   config = processConfig(inject(IMAGE_CONFIG));
@@ -4334,7 +4427,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
       if (this.priority) {
         const checker = this.injector.get(PreconnectLinkChecker);
         checker.assertPreconnect(this.getRewrittenSrc(), this.ngSrc);
-        if (false) {
+        if (true) {
           const applicationRef = this.injector.get(ApplicationRef);
           assetPriorityCountBelowThreshold(applicationRef);
         }
@@ -4367,7 +4460,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
         this.setHostAttribute("sizes", "auto, 100vw");
       }
     }
-    if (this.priority) {
+    if (false) {
       const preloadLinkCreator = this.injector.get(PreloadLinkCreator);
       preloadLinkCreator.createPreloadLinkTag(this.renderer, this.getRewrittenSrc(), rewrittenSrcset, this.sizes);
     }
@@ -4390,7 +4483,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
         }
       }
     }
-    if (ngDevMode && changes["placeholder"]?.currentValue && true && false) {
+    if (ngDevMode && changes["placeholder"]?.currentValue && true && true) {
       assertPlaceholderDimensions(this, this.imgElement);
     }
   }
@@ -4881,6 +4974,27 @@ function assertNoLoaderParamsWithoutLoader(dir, imageLoader) {
     console.warn(formatRuntimeError(2963, `${imgDirectiveDetails(dir.ngSrc)} the \`loaderParams\` attribute is present but no image loader is configured (i.e. the default one is being used), which means that the loaderParams data will not be consumed and will not affect the URL. To fix this, provide a custom loader or remove the \`loaderParams\` attribute from the image.`));
   }
 }
+function assetPriorityCountBelowThreshold(appRef) {
+  return __async(this, null, function* () {
+    if (IMGS_WITH_PRIORITY_ATTR_COUNT === 0) {
+      IMGS_WITH_PRIORITY_ATTR_COUNT++;
+      yield appRef.whenStable();
+      if (IMGS_WITH_PRIORITY_ATTR_COUNT > PRIORITY_COUNT_THRESHOLD) {
+        console.warn(formatRuntimeError(2966, `NgOptimizedImage: The "priority" attribute is set to true more than ${PRIORITY_COUNT_THRESHOLD} times (${IMGS_WITH_PRIORITY_ATTR_COUNT} times). Marking too many images as "high" priority can hurt your application's LCP (https://web.dev/lcp). "Priority" should only be set on the image expected to be the page's LCP element.`));
+      }
+    } else {
+      IMGS_WITH_PRIORITY_ATTR_COUNT++;
+    }
+  });
+}
+function assertPlaceholderDimensions(dir, imgElement) {
+  const computedStyle = window.getComputedStyle(imgElement);
+  let renderedWidth = parseFloat(computedStyle.getPropertyValue("width"));
+  let renderedHeight = parseFloat(computedStyle.getPropertyValue("height"));
+  if (renderedWidth > PLACEHOLDER_DIMENSION_LIMIT || renderedHeight > PLACEHOLDER_DIMENSION_LIMIT) {
+    console.warn(formatRuntimeError(2967, `${imgDirectiveDetails(dir.ngSrc)} it uses a placeholder image, but at least one of the dimensions attribute (height or width) exceeds the limit of ${PLACEHOLDER_DIMENSION_LIMIT}px. To fix this, use a smaller image as a placeholder.`));
+  }
+}
 function callOnLoadIfImageIsLoaded(img, callback) {
   if (img.complete && img.naturalWidth) {
     callback();
@@ -5004,4 +5118,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-UO4WZBQ7.js.map
+//# sourceMappingURL=chunk-HNUTITBW.js.map
