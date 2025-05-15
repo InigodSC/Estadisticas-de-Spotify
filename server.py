@@ -51,7 +51,7 @@ def login2():
     response = requests.post('https://accounts.spotify.com/api/token', headers=headers, data=data)
     access_token = response.json()['access_token']
 
-    return access_token
+    return str(access_token)
 
 #Login para el cliente
 @app.get("/login")
