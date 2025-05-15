@@ -8,25 +8,28 @@ import { Observable } from 'rxjs';
 export class SpotifyService {
 
   private readonly baseUrl = 'http://localhost:8888';
-
   constructor(private http: HttpClient) {}
 
-  getUserName(): Observable<{ nombre: string }> {
-    return this.http.get<{ nombre: string }>(`${this.baseUrl}/usr_name`);
+  getUserName(token:string): Observable<{ nombre: string }> {
+    return this.http.get<{ nombre: string }>(`${this.baseUrl}/usr_name/${token}`);
   } 
-  getUserPic(): Observable<{ url: string }> {
-    return this.http.get<{ url: string }>(`${this.baseUrl}/usr_pic`);
+  getUserPic(token:string): Observable<{ url: string }> {
+    return this.http.get<{ url: string }>(`${this.baseUrl}/usr_pic/${token}`);
   }
-  getTopArtists(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/top_artists?limit=10`);
+  getTopArtists(token:string, n:number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/top_artists/${token}?limit=${n}`);
   }
-  getTopTracks(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/top_tracks?limit=10`);
+  getTopTracks(token:string, n:number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/top_tracks/${token}?limit=${n}`);
   }
-  getRecentTracks(): Observable<any>{
-    return this.http.get(`${this.baseUrl}/recent_tracks?limit=10`);
+  getRecentTracks(token:String, n:number): Observable<any>{
+    return this.http.get(`${this.baseUrl}/recent_tracks/${token}?limit=${n}`);
   }
   getToken(): Observable<any> {
     return this.http.get(`${this.baseUrl}/token`);
   }
+  logout(): void {
+    localStorage.removeItem('access_token');
+  }
+
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { SpotifyService } from '../../services/spotify.service';
+import { Router } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'app-canciones',
@@ -11,18 +13,23 @@ import { SpotifyService } from '../../services/spotify.service';
 })
 export class CancionesComponent implements OnInit {
   private spotifyService = inject(SpotifyService);
+  private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   topCanciones: any[] = [];
+
   ngOnInit(): void {
-    this.spotifyService.getTopTracks().subscribe({
-      next: (res) => {
-        console.log('Canciones recibidas:', res);
-        this.topCanciones = res;
-      },
-      error: (err) => {
-        console.error('Error al obtener canciones:', err);
-        this.topCanciones = [];
-      }
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.spotifyService.getTopTracks(token, 20).subscribe({
+      next: (res) => this.topCanciones = res,
+      error: () => this.topCanciones = []
     });
   }
 }

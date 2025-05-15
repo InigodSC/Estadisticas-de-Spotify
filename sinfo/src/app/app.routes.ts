@@ -4,6 +4,7 @@ import { ArtistasComponent } from './components/artistas/artistas.component';
 import { CancionesComponent } from './components/canciones/canciones.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { LoginComponent } from './components/login/login.component';
+import { CallbackComponent } from './components/callback/callback.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'canciones', component: CancionesComponent },
   { path: 'perfil', component: PerfilComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'callback', component: CallbackComponent },
   { path: '**', redirectTo: '' }
 ];

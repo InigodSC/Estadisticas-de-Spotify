@@ -20,7 +20,8 @@ export class OpcionesUsuarioComponent {
     this.cerrarOpciones.emit();
   }
 
-  logout(): void {
-    window.location.href = 'http://localhost:8000/login';
-  }
+  cerrarSesion(): void {
+  localStorage.removeItem('access_token');
+  this.router.navigate(['/login']);
+}
 }

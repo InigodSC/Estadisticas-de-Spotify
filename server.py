@@ -26,33 +26,6 @@ URL_BASE = "https://api.spotify.com/v1"
 
 access_token = None
 
-@app.get("/login_v2")
-def login2():
-    params = {
-    'client_id': CLIENT_ID,
-    'response_type': 'code',
-    'redirect_uri': REDIRECT_URI,
-    'scope': SCOPE,
-    }
-    url = f"https://accounts.spotify.com/authorize?{urllib.parse.urlencode(params)}"
-    webbrowser.open(url)
-
-    # Obtener token
-    auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
-    headers = {
-        'Authorization': f'Basic {auth_header}',
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-    data = {
-        'grant_type': 'authorization_code',
-        'code': None,
-        'redirect_uri': REDIRECT_URI
-    }
-    response = requests.post('https://accounts.spotify.com/api/token', headers=headers, data=data)
-    access_token = response.json()['access_token']
-
-    return str(access_token)
-
 #Login para el cliente
 @app.get("/login")
 def login():
@@ -66,6 +39,8 @@ def login():
     return RedirectResponse(url)
 
 #Recibe el codigo de autorización
+from fastapi.responses import RedirectResponse
+
 @app.get("/callback")
 def callback(request: Request):
     global access_token
@@ -89,7 +64,10 @@ def callback(request: Request):
         raise HTTPException(status_code=res.status_code, detail="Error obteniendo el token")
 
     access_token = res.json()["access_token"]
-    return HTMLResponse("<h2>Autenticación completada correctamente. Ya puedes usar la API.</h2>")
+
+    # ✅ Redirige a Angular y le pasa el token por query
+    return RedirectResponse(f"http://localhost:4200/callback?access_token={access_token}")
+
 
 #Devuelve el token de acceso del ultimo cliente logeado
 @app.get("/token")
