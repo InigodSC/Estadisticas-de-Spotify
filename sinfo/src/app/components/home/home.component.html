@@ -8,23 +8,31 @@
 <app-menu *ngIf="mostrarMenu" (cerrarMenu)="despligueMenu()" />
 
 <app-opciones-usuario *ngIf="mostrarOpciones" />
-<div class="a">
-  <h2>Bienvenido {{nombre}}</h2>
-</div>
-<div class="top-charts">
-  <div class="chart">
-    <h3>Canciones más recientes</h3>
-    <ul class="recent-songs">
-      <li *ngFor="let song of cancionesRecientes">
-        <img [src]="song.imagen" alt="Álbum" />
-        <div class="song-info">
-          <strong>{{ song.titulo }}</strong>
-          <span>{{ song.artistas }}</span>
-        </div>
-      </li>
-    </ul>
+<div class="contenido-wrapper">
+  <div class="a">
+    <h2>Resumen de {{nombre}}</h2>
   </div>
 
-  <div class="chart"><h3>Canciones más escuchadas globalmente</h3></div>
-  <div class="chart"><h3>Artistas más escuchados globalmente</h3></div>
+  <div class="top-charts">
+    <div class="chart">
+      <h3>Canciones más recientes</h3>
+      <ul class="recent-songs">
+        <li *ngFor="let song of cancionesRecientes">
+          <img [src]="song.imagen" alt="Álbum" />
+          <div class="song-info">
+            <strong>{{ song.titulo }}</strong>
+            <span>{{ song.artistas }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="chart">
+      <h3>Canciones más escuchadas globalmente</h3>
+    </div>
+
+    <div class="chart">
+      <h3>Artistas más escuchados globalmente</h3>
+    </div>
+  </div>
 </div>

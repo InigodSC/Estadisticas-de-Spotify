@@ -20,8 +20,6 @@
 .menu-container li {
   padding: 15px 20px;
   cursor: pointer;
-  border-top: 1px solid #1DB954;
-  border-bottom: 1px solid #1DB954;
 }
 
 .menu-container li:hover {

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MenuComponent } from '../menu/menu.component';
 import { OpcionesUsuarioComponent } from '../opciones-usuario/opciones-usuario.component';
 import { SpotifyService } from '../../services/spotify.service';
@@ -14,6 +14,7 @@ import { SpotifyService } from '../../services/spotify.service';
 })
 export class HomeComponent implements OnInit{
   private spotifyService = inject(SpotifyService);
+  private router = inject(Router);
 
   mostrarMenu = false;
   mostrarOpciones = false;
@@ -30,31 +31,31 @@ export class HomeComponent implements OnInit{
     this.mostrarOpciones = !this.mostrarOpciones;
   }
   ngOnInit(): void {
-    this.spotifyService.getUserPic().subscribe({
-      next: (res) => {
-        this.foto = res.url;
+    this.spotifyService.getToken().subscribe({
+      next: () => {
+        console.log('Sesión activa, continuando...');
+        this.cargarPerfilYDatos(); // 👈 tu función para nombre, foto, canciones...
       },
       error: () => {
-        this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';
+        console.warn('No hay token, redirigiendo a login...');
+        this.router.navigate(['/login']);
       }
     });
+  }
+  cargarPerfilYDatos(): void {
+    this.spotifyService.getUserPic().subscribe({
+      next: (res) => this.foto = res.url,
+      error: () => this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
+    });
+
     this.spotifyService.getUserName().subscribe({
-      next:(res)=>{
-        this.nombre = res.nombre;
-      },
-      error:()=>{
-        this.nombre='Usuario';
-      }
-    })
+      next: (res) => this.nombre = res.nombre,
+      error: () => this.nombre = 'Usuario'
+    });
 
     this.spotifyService.getRecentTracks().subscribe({
-      next:(res)=>{
-        this.cancionesRecientes = res;
-      },
-      error:()=>{
-        this.cancionesRecientes = [];
-      }
-    })
-
+      next: (res) => this.cancionesRecientes = res,
+      error: () => this.cancionesRecientes = []
+    });
   }
 }
