@@ -5,6 +5,8 @@ from fastapi import Request, HTTPException, Query
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import requests, base64, urllib.parse
+import webbrowser
+
 
 app = fastapi.FastAPI()
 
@@ -24,7 +26,34 @@ URL_BASE = "https://api.spotify.com/v1"
 
 access_token = None
 
-#Que el usuario haga login 
+@app.login("/login_v2")
+def login2():
+    params = {
+    'client_id': CLIENT_ID,
+    'response_type': 'code',
+    'redirect_uri': REDIRECT_URI,
+    'scope': SCOPE,
+    }
+    url = f"https://accounts.spotify.com/authorize?{urllib.parse.urlencode(params)}"
+    webbrowser.open(url)
+
+    # Obtener token
+    auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
+    headers = {
+        'Authorization': f'Basic {auth_header}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    data = {
+        'grant_type': 'authorization_code',
+        'code': None,
+        'redirect_uri': REDIRECT_URI
+    }
+    response = requests.post('https://accounts.spotify.com/api/token', headers=headers, data=data)
+    access_token = response.json()['access_token']
+
+    return access_token
+
+#Login para el cliente
 @app.get("/login")
 def login():
     params = {
@@ -62,25 +91,16 @@ def callback(request: Request):
     access_token = res.json()["access_token"]
     return HTMLResponse("<h2>Autenticación completada correctamente. Ya puedes usar la API.</h2>")
 
-
-#Devuelve el token de acceso
+#Devuelve el token de acceso del ultimo cliente logeado
 @app.get("/token")
 def get_token():
-    if not access_token:
-        raise HTTPException(status_code=401, detail="No estás autenticado todavía")
     return {"access_token": access_token}
 
-#Comprueba si esta autenticado
-def auth_headers():
-    if not access_token:
-        raise HTTPException(status_code=401, detail="No estás autenticado todavía")
-    return {"Authorization": f"Bearer {access_token}"}
-
-
 #Devuelve el nombre de usuario
-@app.get("/usr_name")
-def getUsrName():
-    headers = auth_headers()
+@app.get("/usr_name/{acs_tkn}")
+def getUsrName(acs_tkn):
+
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
     response = requests.get(f"{URL_BASE}/me", headers=headers)
 
     if response.status_code != 200:
@@ -92,9 +112,10 @@ def getUsrName():
     }
 
 #Devuelve la foto de perfil del usuario
-@app.get("/usr_pic")
-def getUsrPic():
-    headers = auth_headers()
+@app.get("/usr_pic/{acs_tkn}")
+def getUsrPic(acs_tkn):
+
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
     response = requests.get(f"{URL_BASE}/me", headers=headers)
 
     if response.status_code != 200:
@@ -110,12 +131,13 @@ def getUsrPic():
 
 
 #Devuelve los top artistas escuchados del usuario, se puede establecer el limite de artistas a mostrar y el tiempo que quieras recoger los datos
-@app.get("/top_artists")
+@app.get("/top_artists/{acs_tkn}")
 def get_top_artists(
+    acs_tkn,
     time_range: str = Query("medium_term", enum=["short_term", "medium_term", "long_term"]),
     limit: int = Query(..., gt=0, le=50, description="Número de artistas a mostrar (entre 1 y 50)")
 ):
-    headers = auth_headers()
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
     url = f"{URL_BASE}/me/top/artists?time_range={time_range}&limit={limit}" 
     res = requests.get(url, headers=headers)
 
@@ -129,12 +151,14 @@ def get_top_artists(
     ]
 
 #Devuelve las top canciones escuchadss del usuario, se puede establecer el limite de canciones a mostrar y el tiempo que quieras recoger los datos
-@app.get("/top_tracks")
+@app.get("/top_tracks/{acs_tkn}")
 def get_top_tracks(
+    acs_tkn,
     time_range: str = Query("medium_term", enum=["short_term", "medium_term", "long_term"]),
-    limit: int = Query(10, ge=1, le=50)
+    limit: int = Query(10, ge=1, le=50),
+    
 ):
-    headers = auth_headers()
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
     url = f"{URL_BASE}/me/top/tracks?time_range={time_range}&limit={limit}"
     res = requests.get(url, headers=headers)
 
@@ -153,9 +177,9 @@ def get_top_tracks(
     ]
 
 #Devuelve las canciones recientemente reproducidas, se puede establecer el límite de canciones que se pueden mostrar
-@app.get("/recent_tracks")
-def get_recent_tracks(limit: int = Query(10, ge=1, le=50)):
-    headers = auth_headers()
+@app.get("/recent_tracks/{acs_tkn}")
+def get_recent_tracks(acs_tkn, limit: int = Query(10, ge=1, le=50)):
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
     url = f"{URL_BASE}/me/player/recently-played?limit={limit}"
     res = requests.get(url, headers=headers)
 
