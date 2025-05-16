@@ -21,33 +21,37 @@ export class HomeComponent implements OnInit {
   mostrarMenu = false;
   mostrarOpciones = false;
 
-  nombre: string = '';
+  nombre: string = 'Invitado';
   foto: string = '';
   cancionesRecientes: any[] = [];
+  haySesion = false;
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const token = localStorage.getItem('access_token');
-    if (!token) {
-      this.router.navigate(['/login']);
-      return;
+    if (token) {
+      this.haySesion = true;
+
+      this.spotifyService.getUserName(token).subscribe({
+        next: (res) => this.nombre = res.nombre,
+        error: () => this.nombre = 'Invitado'
+      });
+
+      this.spotifyService.getUserPic(token).subscribe({
+        next: (res) => this.foto = res.url,
+        error: () => this.foto = ''
+      });
+
+      this.spotifyService.getRecentTracks(token, 10).subscribe({
+        next: (res) => this.cancionesRecientes = res,
+        error: () => this.cancionesRecientes = []
+      });
+    } else {
+      this.haySesion = false;
+      this.nombre = 'Invitado';
+      this.foto = '';
     }
-
-    this.spotifyService.getUserName(token).subscribe({
-      next: (res) => this.nombre = res.nombre,
-      error: () => this.router.navigate(['/login'])
-    });
-
-    this.spotifyService.getUserPic(token).subscribe({
-      next: (res) => this.foto = res.url,
-      error: () => this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
-    });
-
-    this.spotifyService.getRecentTracks(token,10).subscribe({
-      next: (res) => this.cancionesRecientes = res,
-      error: () => this.cancionesRecientes = []
-    });
   }
 
   despligueMenu(): void {
@@ -55,6 +59,14 @@ export class HomeComponent implements OnInit {
   }
 
   alternarOpciones(): void {
-    this.mostrarOpciones = !this.mostrarOpciones;
+    if (this.haySesion) {
+      this.mostrarOpciones = !this.mostrarOpciones;
+    } else {
+      this.irALogin();
+    }
+  }
+
+  irALogin(): void {
+    this.router.navigate(['/login']);
   }
 }

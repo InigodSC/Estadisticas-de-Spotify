@@ -1,7 +1,15 @@
 <div class="header">
   <button (click)="despligueMenu()">☰</button>
   <h2>SINFO</h2>
-  <button (click)="alternarOpciones()"><img [src]="foto" alt="Foto de perfil"></button>
+  <button (click)="alternarOpciones()">
+  <ng-container *ngIf="haySesion; else loginBtn">
+    <img [src]="foto || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'" alt="Foto de perfil">
+  </ng-container>
+  <ng-template #loginBtn>
+    Iniciar sesión
+  </ng-template>
+</button>
+
 </div>
 
 <app-menu *ngIf="mostrarMenu" />

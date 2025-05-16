@@ -20,8 +20,9 @@ export class OpcionesUsuarioComponent {
     this.cerrarOpciones.emit();
   }
 
-  cerrarSesion(): void {
+ cerrarSesion(): void {
   localStorage.removeItem('access_token');
-  this.router.navigate(['/login']);
-}
+  window.location.href = '/';
+ }
+
 }
