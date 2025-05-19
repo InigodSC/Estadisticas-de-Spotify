@@ -162,7 +162,7 @@ def getUsrFollowers(acs_tkn: str):
 @app.get("/top_artists/{acs_tkn}")
 def get_top_artists(
     acs_tkn,
-    time_range: str = Query("medium_term", enum=["short_term", "medium_term", "long_term"]),
+    time_range: str = Query("long_term", enum=["short_term", "medium_term", "long_term"]),
     limit: int = Query(..., gt=0, le=50, description="Número de artistas a mostrar (entre 1 y 50)")
 ):
     headers = {"Authorization": f"Bearer {acs_tkn}"}
@@ -182,7 +182,7 @@ def get_top_artists(
 @app.get("/top_tracks/{acs_tkn}")
 def get_top_tracks(
     acs_tkn,
-    time_range: str = Query("medium_term", enum=["short_term", "medium_term", "long_term"]),
+    time_range: str = Query("long_term", enum=["short_term", "medium_term", "long_term"]),
     limit: int = Query(10, ge=1, le=50),
     
 ):
