@@ -21,7 +21,7 @@ app.add_middleware(
 CLIENT_ID = "10975615f3b34ac09a9c8c9a1d64642a"
 CLIENT_SECRET = "c2cfab340b9a4a82a436f1ac90d1fafa"
 REDIRECT_URI = "http://localhost:8888/callback"
-SCOPE = "user-top-read user-read-recently-played user-read-private"
+SCOPE = "user-top-read user-read-recently-played user-read-private user-read-email"
 URL_BASE = "https://api.spotify.com/v1"
 
 access_token = None
@@ -153,7 +153,7 @@ def getUsrFollowers(acs_tkn: str):
 
     data = response.json()
     return {
-        "email": data.get("country"),
+        "country": data.get("country"),
     }
 
 #############GETS CANCIONES Y ARTISTAS#############

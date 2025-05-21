@@ -18,6 +18,9 @@ export class PerfilComponent implements OnInit {
 
   nombre: string = '';
   foto: string = '';
+  email: string ='';
+  followers: string = '';
+  country : string = '';
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -36,6 +39,21 @@ export class PerfilComponent implements OnInit {
     this.spotifyService.getUserPic(token).subscribe({
       next: (res) => this.foto = res.url,
       error: () => this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
+    });
+
+    this.spotifyService.getEmail(token).subscribe({
+      next:(res)=> this.email = res.email,
+      error:()=>this.email = 'Desconocido'
+    });
+
+    this.spotifyService.getCountry(token).subscribe({
+      next:(res)=> this.country = res.country,
+      error:()=>this.country = 'Desconocido'
+    });
+
+    this.spotifyService.getFollowers(token).subscribe({
+      next:(res)=> this.followers = res.followers,
+      error:()=>this.followers = '0'
     });
   }
 

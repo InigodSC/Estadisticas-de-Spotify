@@ -16,6 +16,15 @@ export class SpotifyService {
   getUserPic(token:string): Observable<{ url: string }> {
     return this.http.get<{ url: string }>(`${this.baseUrl}/usr_pic/${token}`);
   }
+  getCountry(token:string):Observable<{country:string}>{
+    return this.http.get<{country:string}>(`${this.baseUrl}/usr_country/${token}`);
+  }
+  getEmail(token:string):Observable<{email:string}>{
+    return this.http.get<{email:string}>(`${this.baseUrl}/usr_email/${token}`);
+  }
+  getFollowers(token:string):Observable<{followers:string}>{
+    return this.http.get<{followers:string}>(`${this.baseUrl}/usr_followers/${token}`);
+  }
   getTopArtists(token:string, n:number): Observable<any> {
     return this.http.get(`${this.baseUrl}/top_artists/${token}?limit=${n}`);
   }
