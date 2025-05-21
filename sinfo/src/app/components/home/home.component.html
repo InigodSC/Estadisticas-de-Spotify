@@ -2,13 +2,14 @@
   <button (click)="despligueMenu()">☰</button>
   <h2>SINFO</h2>
   <button (click)="alternarOpciones()">
-  <ng-container *ngIf="haySesion; else loginBtn">
-    <img [src]="foto || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'" alt="Foto de perfil">
-  </ng-container>
-  <ng-template #loginBtn>
-    Iniciar sesión
-  </ng-template>
-</button>
+    <ng-container *ngIf="haySesion; else loginBtn">
+      <img [src]="foto || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'"
+        alt="Foto de perfil">
+    </ng-container>
+    <ng-template #loginBtn>
+      Iniciar sesión
+    </ng-template>
+  </button>
 
 </div>
 
@@ -36,11 +37,33 @@
     </div>
 
     <div class="chart">
-      <h3>Canciones más escuchadas globalmente</h3>
+      <h3>Basado en tus canciones más escuchadas te recomendamos</h3>
+      <ul class="recent-songs">
+        <ul *ngIf="cancionesRecomendadas.length > 0">
+          <li *ngFor="let song of cancionesRecomendadas">
+            <img [src]="song.imagen" />
+            <div>
+              <strong>{{ song.nombre }}</strong>
+              <span>{{ song.artistas?.join(', ') }}</span>
+            </div>
+          </li>
+
+        </ul>
+
+      </ul>
     </div>
 
     <div class="chart">
-      <h3>Artistas más escuchados globalmente</h3>
+      <h3>Basado en tus artistas más escuchados te recomendamos</h3>
+      <ul class="recent-songs">
+        <li *ngFor="let artist of artistasRecomendados">
+          <strong>{{ artist.nombre }}</strong>
+          <span>ID: {{ artist.id }}</span>
+        </li>
+
+
+      </ul>
     </div>
+
   </div>
 </div>

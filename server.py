@@ -174,9 +174,15 @@ def get_top_artists(
 
     data = res.json()
     return [
-        {"nombre": artist["name"], "generos": artist["genres"], "imagen": artist["images"][0]["url"] if artist.get("images") else "https://via.placeholder.com/150"}
-        for artist in data.get("items", [])
-    ]
+    {
+        "nombre": artist["name"],
+        "generos": artist["genres"],
+        "imagen": artist["images"][0]["url"] if artist.get("images") else "https://via.placeholder.com/150",
+        "id": artist["id"]  # ✅ Aquí lo añadimos
+    }
+    for artist in data.get("items", [])
+]
+
 
 #Devuelve las top canciones escuchadss del usuario, se puede establecer el limite de canciones a mostrar y el tiempo que quieras recoger los datos
 @app.get("/top_tracks/{acs_tkn}")
@@ -195,14 +201,16 @@ def get_top_tracks(
 
     data = res.json()
     return [
-        {
-            "titulo": track["name"],
-            "artistas": [artist["name"] for artist in track["artists"]],
-            "album": track["album"]["name"],
-            "imagen": track["album"]["images"][0]["url"] if track["album"]["images"] else None
-        }
-        for track in data.get("items", [])
-    ]
+    {
+        "titulo": track["name"],
+        "artistas": [artist["name"] for artist in track["artists"]],
+        "album": track["album"]["name"],
+        "imagen": track["album"]["images"][0]["url"] if track["album"]["images"] else None,
+        "id": track["id"]  # ✅ Aquí también
+    }
+    for track in data.get("items", [])
+]
+
 
 #Devuelve las canciones recientemente reproducidas, se puede establecer el límite de canciones que se pueden mostrar
 @app.get("/recent_tracks/{acs_tkn}")

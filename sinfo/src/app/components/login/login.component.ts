@@ -8,6 +8,6 @@ import { Component } from '@angular/core';
 })
 export class LoginComponent {
   iniciarSesion(): void {
-    window.location.href = 'http://localhost:8888/login';
+    window.location.href = 'http://81.34.225.171:15705/login';
   }
 }

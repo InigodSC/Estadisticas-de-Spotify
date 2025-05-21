@@ -24,6 +24,8 @@ export class HomeComponent implements OnInit {
   nombre: string = 'Invitado';
   foto: string = '';
   cancionesRecientes: any[] = [];
+  cancionesRecomendadas: any[] = [];
+  artistasRecomendados: any[] = [];
   haySesion = false;
 
   ngOnInit(): void {
@@ -46,6 +48,39 @@ export class HomeComponent implements OnInit {
       this.spotifyService.getRecentTracks(token, 10).subscribe({
         next: (res) => this.cancionesRecientes = res,
         error: () => this.cancionesRecientes = []
+      });
+
+      this.spotifyService.getTopTracks(token, 1).subscribe({
+        next: (tracks) => {
+          if (tracks.length > 0 && tracks[0].id) {
+            const trackId = tracks[0].id;
+            this.spotifyService.getRecommendTracksById(token, trackId).subscribe({
+              next: (res) => {
+                console.log('Recomendaciones de canciones:', res);
+                this.cancionesRecomendadas = res;
+              },
+              error: () => this.cancionesRecomendadas = []
+            });
+          }
+        },
+        error: () => this.cancionesRecomendadas = []
+      });
+
+      // Top artista → recomendaciones
+      this.spotifyService.getTopArtists(token, 1).subscribe({
+        next: (artists) => {
+          if (artists.length > 0 && artists[0].id) {
+            const artistId = artists[0].id;
+            this.spotifyService.getRecommendArtistsById(token, artistId).subscribe({
+              next: (res) => {
+                console.log('Recomendaciones de artistas:', res);
+                this.artistasRecomendados = res;
+              },
+              error: () => this.artistasRecomendados = []
+            });
+          }
+        },
+        error: () => this.artistasRecomendados = []
       });
     } else {
       this.haySesion = false;

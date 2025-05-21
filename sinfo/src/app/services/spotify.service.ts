@@ -7,32 +7,38 @@ import { Observable } from 'rxjs';
 })
 export class SpotifyService {
 
-  private readonly baseUrl = 'http://localhost:8888';
-  constructor(private http: HttpClient) {}
+  private readonly baseUrl = 'http://81.34.225.171:15705';
+  constructor(private http: HttpClient) { }
 
-  getUserName(token:string): Observable<{ nombre: string }> {
+  getUserName(token: string): Observable<{ nombre: string }> {
     return this.http.get<{ nombre: string }>(`${this.baseUrl}/usr_name/${token}`);
-  } 
-  getUserPic(token:string): Observable<{ url: string }> {
+  }
+  getUserPic(token: string): Observable<{ url: string }> {
     return this.http.get<{ url: string }>(`${this.baseUrl}/usr_pic/${token}`);
   }
-  getCountry(token:string):Observable<{country:string}>{
-    return this.http.get<{country:string}>(`${this.baseUrl}/usr_country/${token}`);
+  getCountry(token: string): Observable<{ country: string }> {
+    return this.http.get<{ country: string }>(`${this.baseUrl}/usr_country/${token}`);
   }
-  getEmail(token:string):Observable<{email:string}>{
-    return this.http.get<{email:string}>(`${this.baseUrl}/usr_email/${token}`);
+  getEmail(token: string): Observable<{ email: string }> {
+    return this.http.get<{ email: string }>(`${this.baseUrl}/usr_email/${token}`);
   }
-  getFollowers(token:string):Observable<{followers:string}>{
-    return this.http.get<{followers:string}>(`${this.baseUrl}/usr_followers/${token}`);
+  getFollowers(token: string): Observable<{ followers: string }> {
+    return this.http.get<{ followers: string }>(`${this.baseUrl}/usr_followers/${token}`);
   }
-  getTopArtists(token:string, n:number): Observable<any> {
+  getTopArtists(token: string, n: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/top_artists/${token}?limit=${n}`);
   }
-  getTopTracks(token:string, n:number): Observable<any> {
+  getTopTracks(token: string, n: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/top_tracks/${token}?limit=${n}`);
   }
-  getRecentTracks(token:String, n:number): Observable<any>{
+  getRecentTracks(token: string, n: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/recent_tracks/${token}?limit=${n}`);
+  }
+  getRecommendTracksById(token: string, trackId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/recommend_tracks/${token}/${trackId}`);
+  }
+  getRecommendArtistsById(token: string, artistId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/recommend_artists/${token}/${artistId}`);
   }
   getToken(): Observable<any> {
     return this.http.get(`${this.baseUrl}/token`);
