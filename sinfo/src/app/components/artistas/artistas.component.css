@@ -52,3 +52,10 @@ li img {
   display: flex;
   flex-direction: column;
 }
+.buscar select {
+  padding: 8px;
+  border: none;
+  border-radius: 3px;
+  margin-left: 5px;
+  font-size: 14px;
+}

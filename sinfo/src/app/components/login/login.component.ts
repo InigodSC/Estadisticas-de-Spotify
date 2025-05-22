@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  iniciarSesion(): void {
-    window.location.href = 'http://81.34.225.171:15705/login';
+  iniciarSesion(): void { //http://81.34.225.171:15705/login
+    window.location.href = 'http://localhost:8888/login';
   }
 }

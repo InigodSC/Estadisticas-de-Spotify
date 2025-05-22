@@ -190,7 +190,6 @@ def get_top_tracks(
     acs_tkn,
     time_range: str = Query("long_term", enum=["short_term", "medium_term", "long_term"]),
     limit: int = Query(10, ge=1, le=50),
-    
 ):
     headers = {"Authorization": f"Bearer {acs_tkn}"}
     url = f"{URL_BASE}/me/top/tracks?time_range={time_range}&limit={limit}"
@@ -200,16 +199,31 @@ def get_top_tracks(
         raise HTTPException(status_code=res.status_code, detail=res.json())
 
     data = res.json()
-    return [
-    {
-        "titulo": track["name"],
-        "artistas": [artist["name"] for artist in track["artists"]],
-        "album": track["album"]["name"],
-        "imagen": track["album"]["images"][0]["url"] if track["album"]["images"] else None,
-        "id": track["id"]  # ✅ Aquí también
-    }
-    for track in data.get("items", [])
-]
+    tracks = []
+
+    for track in data.get("items", []):
+        generos = set()
+
+        # Obtener los géneros de cada artista del track
+        for artist in track["artists"]:
+            artist_id = artist["id"]
+            artist_url = f"{URL_BASE}/artists/{artist_id}"
+            artist_res = requests.get(artist_url, headers=headers)
+            if artist_res.status_code == 200:
+                artist_data = artist_res.json()
+                for genero in artist_data.get("genres", []):
+                    generos.add(genero)
+
+        tracks.append({
+            "titulo": track["name"],
+            "artistas": [artist["name"] for artist in track["artists"]],
+            "album": track["album"]["name"],
+            "imagen": track["album"]["images"][0]["url"] if track["album"]["images"] else None,
+            "id": track["id"],
+            "generos": list(generos)  # ✅ Añadido para el filtro en Angular
+        })
+
+    return tracks
 
 
 #Devuelve las canciones recientemente reproducidas, se puede establecer el límite de canciones que se pueden mostrar

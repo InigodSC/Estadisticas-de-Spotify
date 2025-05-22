@@ -55,10 +55,7 @@ export class HomeComponent implements OnInit {
           if (tracks.length > 0 && tracks[0].id) {
             const trackId = tracks[0].id;
             this.spotifyService.getRecommendTracksById(token, trackId).subscribe({
-              next: (res) => {
-                console.log('Recomendaciones de canciones:', res);
-                this.cancionesRecomendadas = res;
-              },
+              next: (res) => this.cancionesRecomendadas = res,
               error: () => this.cancionesRecomendadas = []
             });
           }
@@ -66,16 +63,13 @@ export class HomeComponent implements OnInit {
         error: () => this.cancionesRecomendadas = []
       });
 
-      // Top artista → recomendaciones
+      // 2. Obtener top artista y luego recomendaciones
       this.spotifyService.getTopArtists(token, 1).subscribe({
         next: (artists) => {
           if (artists.length > 0 && artists[0].id) {
             const artistId = artists[0].id;
             this.spotifyService.getRecommendArtistsById(token, artistId).subscribe({
-              next: (res) => {
-                console.log('Recomendaciones de artistas:', res);
-                this.artistasRecomendados = res;
-              },
+              next: (res) => this.artistasRecomendados = res,
               error: () => this.artistasRecomendados = []
             });
           }

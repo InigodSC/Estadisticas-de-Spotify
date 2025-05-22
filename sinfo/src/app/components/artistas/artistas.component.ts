@@ -20,6 +20,8 @@ export class ArtistasComponent implements OnInit {
   topArtists: any[] = [];
   filtrados: any[] = [];
   nombre: string = '';
+  generoFiltro: string = '';
+  generosDisponibles: string[] = [];
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -34,6 +36,14 @@ export class ArtistasComponent implements OnInit {
       next: (res) => {
         this.topArtists = res;
         this.filtrados = res;
+
+        const generos = new Set<string>();
+        res.forEach((artist: any) => {
+          if (artist.generos) {
+            artist.generos.forEach((g: string) => generos.add(g));
+          }
+        });
+        this.generosDisponibles = Array.from(generos);
       },
       error: () => {
         this.topArtists = [];
@@ -44,8 +54,11 @@ export class ArtistasComponent implements OnInit {
 
   onSearch(): void {
     const term = this.nombre.toLowerCase();
+    const genero = this.generoFiltro.toLowerCase();
+
     this.filtrados = this.topArtists.filter(artist =>
-      artist.nombre.toLowerCase().includes(term)
+      artist.nombre.toLowerCase().includes(term) &&
+      (!genero || artist.generos?.some((g: string) => g.toLowerCase().includes(genero)))
     );
   }
 }

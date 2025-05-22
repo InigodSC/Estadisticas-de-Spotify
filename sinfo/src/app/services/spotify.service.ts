@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SpotifyService {
-
-  private readonly baseUrl = 'http://81.34.225.171:15705';
+                            //http://81.34.225.171:15705
+  private readonly baseUrl = 'http://localhost:8888';
   constructor(private http: HttpClient) { }
 
   getUserName(token: string): Observable<{ nombre: string }> {

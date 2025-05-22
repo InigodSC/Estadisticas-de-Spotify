@@ -37,33 +37,30 @@
     </div>
 
     <div class="chart">
-      <h3>Basado en tus canciones más escuchadas te recomendamos</h3>
+      <h3>Canciones recomendadas</h3>
       <ul class="recent-songs">
-        <ul *ngIf="cancionesRecomendadas.length > 0">
-          <li *ngFor="let song of cancionesRecomendadas">
-            <img [src]="song.imagen" />
-            <div>
-              <strong>{{ song.nombre }}</strong>
-              <span>{{ song.artistas?.join(', ') }}</span>
-            </div>
-          </li>
-
-        </ul>
-
+        <li *ngFor="let song of cancionesRecomendadas">
+          <img [src]="song.imagen" alt="Álbum" />
+          <div class="song-info">
+            <strong>{{ song.nombre }}</strong>
+            <span>{{ song.artistas?.join(', ') }}</span>
+          </div>
+        </li>
       </ul>
     </div>
 
     <div class="chart">
-      <h3>Basado en tus artistas más escuchados te recomendamos</h3>
+      <h3>Artistas recomendados</h3>
       <ul class="recent-songs">
         <li *ngFor="let artist of artistasRecomendados">
-          <strong>{{ artist.nombre }}</strong>
-          <span>ID: {{ artist.id }}</span>
+          <img [src]="artist.imagen || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'"
+            alt="Artista" />
+          <div class="song-info">
+            <strong>{{ artist.nombre }}</strong>
+            <span>ID: {{ artist.id }}</span>
+          </div>
         </li>
-
-
       </ul>
     </div>
-
   </div>
 </div>
