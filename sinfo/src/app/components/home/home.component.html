@@ -3,14 +3,16 @@
   <h2>SINFO</h2>
   <button (click)="alternarOpciones()">
     <ng-container *ngIf="haySesion; else loginBtn">
-      <img [src]="foto || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'"
-        alt="Foto de perfil">
+      <img
+        [src]="
+          foto ||
+          'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
+        "
+        alt="Foto de perfil"
+      />
     </ng-container>
-    <ng-template #loginBtn>
-      Iniciar sesión
-    </ng-template>
+    <ng-template #loginBtn> Iniciar sesión </ng-template>
   </button>
-
 </div>
 
 <app-menu *ngIf="mostrarMenu" />
@@ -19,7 +21,7 @@
 <app-opciones-usuario *ngIf="mostrarOpciones" />
 <div class="contenido-wrapper">
   <div class="a">
-    <h2>Resumen de {{nombre}}</h2>
+    <h2>Resumen de {{ nombre }}</h2>
   </div>
 
   <div class="top-charts">
@@ -36,34 +38,44 @@
       </ul>
     </div>
     <div class="chart">
-      <h3>Canciones recomendadas para ti</h3>
-
-      <div *ngIf="cancionesRecomendadas.length === 0" class="mensaje-vacio">
-        No se encontraron recomendaciones. Asegúrate de tener artistas con géneros definidos en tu perfil de Spotify.
+      <h3>Canciones para ti</h3>
+      <div *ngIf="cancionesPersonalizadas.length === 0" class="mensaje-vacio">
+        No hay recomendaciones personalizadas disponibles por ahora.
       </div>
 
-      <ul class="canciones-recomendadas" *ngIf="cancionesRecomendadas.length > 0">
-        <li *ngFor="let song of cancionesRecomendadas">
+      <ul
+        class="canciones-recomendadas"
+        *ngIf="cancionesPersonalizadas.length > 0"
+      >
+        <li *ngFor="let song of cancionesPersonalizadas">
           <img [src]="song.imagen" />
           <div class="info">
-            <strong>{{ song.nombre }}</strong>
-            <span>{{ song.artistas?.join(', ') }}</span>
+            <strong>{{ song.titulo }}</strong>
+            <span>{{ song.artistas?.join(", ") }}</span>
           </div>
         </li>
       </ul>
     </div>
 
-
-
     <div class="chart">
       <h3>Artistas recomendados</h3>
       <ul class="recent-songs">
         <li *ngFor="let artist of artistasRecomendados">
-          <img [src]="artist.imagen || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'"
-            alt="Artista" />
+          <img
+            [src]="
+              artist.imagen ||
+              'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
+            "
+            alt="Artista"
+          />
           <div class="song-info">
             <strong>{{ artist.nombre }}</strong>
-            <span>ID: {{ artist.id }}</span>
+            <span *ngIf="artist.generos?.length > 0">
+              {{ artist.generos[0] }}
+            </span>
+            <span *ngIf="artist.generos?.length === 0" style="color: #888">
+              Sin género definido
+            </span>
           </div>
         </li>
       </ul>

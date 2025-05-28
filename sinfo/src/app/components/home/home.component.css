@@ -48,14 +48,14 @@
 }
 
 
-.recent-songs {
+.recent-songs, .canciones-recomendadas {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
 }
 
-.recent-songs li {
+.recent-songs li, .canciones-recomendadas li {
   display: flex;
   align-items: center;
   background-color: #333;
@@ -65,7 +65,7 @@
   transition: background-color 0.2s;
 }
 
-.recent-songs li:hover {
+.recent-songs li:hover, .canciones-recomendadas li:hover {
   background-color: #444;
 }
 
@@ -97,7 +97,7 @@
   margin-bottom: 20px;
 }
 
-.recent-songs img {
+.recent-songs img, .canciones-recomendadas img  {
   width: 50px;
   height: 50px;
   object-fit: cover;
@@ -110,31 +110,6 @@
   font-size: 12px;
   font-style: italic;
 }
-
-.canciones-recomendadas {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.canciones-recomendadas li {
-  display: flex;
-  align-items: center;
-  background-color: #333;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.canciones-recomendadas img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 15px;
-  border-radius: 4px;
-  border: 1px solid #1DB954;
-}
-
 .canciones-recomendadas .info {
   display: flex;
   flex-direction: column;
@@ -156,3 +131,8 @@
   margin: 10px 0;
 }
 
+/* Opcional: destacar la sección de recomendaciones personalizadas */
+.chart.recomendacion-personalizada {
+  border: 1px dashed #1DB954;
+  box-shadow: 0 0 5px rgba(29, 185, 84, 0.3);
+}

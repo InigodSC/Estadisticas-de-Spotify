@@ -15,8 +15,14 @@ app.add_middleware(
     allow_origins=["http://localhost:4200"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type"]
 )
+
+GENRES_VALIDOS = {
+    "pop", "rock", "hip-hop", "edm", "electronic", "latin", "indie", "reggaeton", "trap",
+    "jazz", "blues", "metal", "dance", "folk", "classical", "soul", "funk", "punk", "house"
+}
+
 
 CLIENT_ID = "10975615f3b34ac09a9c8c9a1d64642a"
 CLIENT_SECRET = "c2cfab340b9a4a82a436f1ac90d1fafa"
@@ -311,77 +317,128 @@ def recommend_artists(acs_tkn: str, artist_id: str):
 
     return unique_artists
 
-@app.get("/recommend_tracks_smart")
-def recommend_tracks_smart(authorization: str = Header(...)):
+@app.get("/recommend_custom")
+def recommend_custom(authorization: str = Header(...)):
     token = authorization.replace("Bearer ", "")
     headers = {"Authorization": f"Bearer {token}"}
-    URL_BASE = "https://api.spotify.com/v1"
 
-    # Paso 1: Obtener géneros válidos desde Spotify
-    genre_res = requests.get(f"{URL_BASE}/recommendations/available-genre-seeds", headers=headers)
-    if genre_res.status_code != 200:
-        print("❌ Error al obtener géneros disponibles")
-        raise HTTPException(status_code=genre_res.status_code, detail="No se pudieron obtener los géneros disponibles")
+    # Paso 1: Obtener top artistas y sus géneros
+    res_artists = requests.get(f"{URL_BASE}/me/top/artists?limit=10", headers=headers)
+    if res_artists.status_code != 200:
+        raise HTTPException(status_code=res_artists.status_code, detail="No se pudieron obtener los artistas")
 
-    available_genres = [g.lower() for g in genre_res.json().get("genres", [])]
-    print("✅ Géneros disponibles (Spotify):", available_genres)
+    top_artists = res_artists.json().get("items", [])
+    generos_frecuentes = []
 
-    # Paso 2: Obtener top tracks del usuario
-    top_tracks_res = requests.get(f"{URL_BASE}/me/top/tracks?limit=20", headers=headers)
-    if top_tracks_res.status_code != 200:
-        print("❌ Error al obtener top tracks:", top_tracks_res.status_code)
-        raise HTTPException(status_code=top_tracks_res.status_code, detail="No se pudieron obtener las canciones top del usuario")
-
-    found_genres = set()
-
-    for track in top_tracks_res.json().get("items", []):
-        for artist in track.get("artists", []):
-            artist_id = artist.get("id")
-            if artist_id:
-                artist_res = requests.get(f"{URL_BASE}/artists/{artist_id}", headers=headers)
-                if artist_res.status_code == 200:
-                    artist_data = artist_res.json()
-                    for g in artist_data.get("genres", []):
-                        g_lower = g.lower()
-                        if g_lower in available_genres:
-                            found_genres.add(g_lower)
-                            if len(found_genres) >= 5:
-                                break
-        if len(found_genres) >= 5:
+    for artist in top_artists:
+        for g in artist.get("genres", []):
+            g_lower = g.lower()
+            if g_lower not in generos_frecuentes:
+                generos_frecuentes.append(g_lower)
+        if len(generos_frecuentes) >= 5:
             break
 
-    print("🎯 Géneros encontrados en tus canciones:", found_genres)
+    if not generos_frecuentes:
+        raise HTTPException(status_code=204, detail="No hay géneros para recomendaciones")
 
-    if not found_genres:
-        raise HTTPException(status_code=204, detail="No hay géneros válidos encontrados en tus canciones top")
+    # Paso 2: Obtener canciones top del usuario para filtrar duplicados
+    top_tracks_res = requests.get(f"{URL_BASE}/me/top/tracks?limit=50", headers=headers)
+    canciones_top_ids = {track["id"] for track in top_tracks_res.json().get("items", [])}
 
-    # Paso 3: Solicitar recomendaciones basadas en los géneros encontrados
-    rec_params = {
-        "seed_genres": ",".join(list(found_genres)[:5]),
-        "limit": 15
-    }
-    print("📤 Solicitando recomendaciones con géneros:", rec_params["seed_genres"])
+    # Paso 3: Buscar artistas relacionados con los géneros y canciones nuevas
+    recomendaciones = []
 
-    rec_res = requests.get(f"{URL_BASE}/recommendations", headers=headers, params=rec_params)
-
-    if rec_res.status_code != 200:
-        print("❌ Error al obtener recomendaciones:", rec_res.status_code)
-        print("🧾 Respuesta completa:", rec_res.text)
-        raise HTTPException(status_code=rec_res.status_code, detail="Error al obtener recomendaciones")
-
-    data = rec_res.json()
-
-    recomendaciones = [
-        {
-            "nombre": track["name"],
-            "artistas": [a["name"] for a in track["artists"]],
-            "imagen": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
-            "id": track["id"]
+    for genre in generos_frecuentes[:3]:
+        # Búsqueda por género
+        search_url = f"https://api.spotify.com/v1/search"
+        params = {
+            "q": f"genre:{genre}",
+            "type": "track",
+            "limit": 15
         }
-        for track in data.get("tracks", [])
-    ]
+        search_res = requests.get(search_url, headers=headers, params=params)
+        if search_res.status_code != 200:
+            continue
 
-    print(f"✅ {len(recomendaciones)} canciones recomendadas encontradas.")
+        tracks = search_res.json().get("tracks", {}).get("items", [])
+        for track in tracks:
+            if track["id"] not in canciones_top_ids:
+                recomendaciones.append({
+                    "titulo": track["name"],
+                    "artistas": [a["name"] for a in track["artists"]],
+                    "album": track["album"]["name"],
+                    "imagen": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
+                    "id": track["id"]
+                })
+            if len(recomendaciones) >= 10:
+                break
+        if len(recomendaciones) >= 10:
+            break
+
+    if not recomendaciones:
+        raise HTTPException(status_code=204, detail="No se encontraron canciones nuevas basadas en tus géneros")
+
+    print(f"✅ {len(recomendaciones)} canciones nuevas recomendadas.")
+    return recomendaciones
+
+@app.get("/recommend_artists_custom")
+def recommend_artists_custom(authorization: str = Header(...)):
+    token = authorization.replace("Bearer ", "")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Paso 1: obtener top artistas
+    res_artists = requests.get(f"{URL_BASE}/me/top/artists?limit=10", headers=headers)
+    if res_artists.status_code != 200:
+        raise HTTPException(status_code=res_artists.status_code, detail="No se pudieron obtener los artistas")
+
+    top_artists_data = res_artists.json().get("items", [])
+    top_artist_ids = {a["id"] for a in top_artists_data}
+    generos_preferidos = []
+
+    for artist in top_artists_data:
+        for g in artist.get("genres", []):
+            g_lower = g.lower()
+            if g_lower not in generos_preferidos:
+                generos_preferidos.append(g_lower)
+        if len(generos_preferidos) >= 5:
+            break
+
+    if not generos_preferidos:
+        raise HTTPException(status_code=204, detail="No se encontraron géneros en tus artistas")
+
+    recomendaciones = []
+    vistos = set()
+
+    # Paso 2: buscar artistas por género
+    for genre in generos_preferidos[:3]:
+        search_url = f"https://api.spotify.com/v1/search"
+        params = {
+            "q": f"genre:{genre}",
+            "type": "artist",
+            "limit": 20
+        }
+        res = requests.get(search_url, headers=headers, params=params)
+        if res.status_code != 200:
+            continue
+
+        for artist in res.json().get("artists", {}).get("items", []):
+            if artist["id"] in top_artist_ids or artist["id"] in vistos:
+                continue
+            vistos.add(artist["id"])
+            recomendaciones.append({
+                "nombre": artist["name"],
+                "id": artist["id"],
+                "imagen": artist["images"][0]["url"] if artist.get("images") else None,
+                "generos": artist.get("genres", [])
+            })
+            if len(recomendaciones) >= 10:
+                break
+        if len(recomendaciones) >= 10:
+            break
+
+    if not recomendaciones:
+        raise HTTPException(status_code=204, detail="No se encontraron artistas nuevos")
+
     return recomendaciones
 
 
