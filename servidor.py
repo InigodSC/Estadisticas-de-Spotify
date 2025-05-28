@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import requests, base64, urllib.parse
 import webbrowser
-
+from collections import Counter
 
 app = fastapi.FastAPI()
 
@@ -21,6 +21,18 @@ app.add_middleware(
 GENRES_VALIDOS = {
     "pop", "rock", "hip-hop", "edm", "electronic", "latin", "indie", "reggaeton", "trap",
     "jazz", "blues", "metal", "dance", "folk", "classical", "soul", "funk", "punk", "house"
+}
+GENERO_FAMILIAS = {
+    "pop": ["pop", "dance pop", "indie pop", "pop rap", "latin pop", "teen pop"],
+    "rock": ["rock", "alternative rock", "indie rock", "hard rock", "soft rock", "punk rock"],
+    "hip-hop": ["hip hop", "rap", "trap", "trap latino", "hip-hop", "gangster rap"],
+    "reggaeton": ["reggaeton", "latin hip hop"],
+    "electronic": ["edm", "electro", "electronic", "house", "deep house", "techno", "trance"],
+    "metal": ["metal", "heavy metal", "death metal", "metalcore"],
+    "rnb": ["r&b", "r-n-b", "soul", "neo soul"],
+    "latin": ["latin", "latino", "salsa", "bachata", "merengue"],
+    "jpop": ["j-pop", "japanese pop", "j-idol", "anime"],
+    "kpop": ["k-pop", "korean pop"],
 }
 
 
@@ -317,120 +329,66 @@ def recommend_artists(acs_tkn: str, artist_id: str):
 
     return unique_artists
 
-@app.get("/recommend_custom")
-def recommend_custom(authorization: str = Header(...)):
-    token = authorization.replace("Bearer ", "")
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # Paso 1: Obtener top artistas y sus géneros
-    res_artists = requests.get(f"{URL_BASE}/me/top/artists?limit=10", headers=headers)
-    if res_artists.status_code != 200:
-        raise HTTPException(status_code=res_artists.status_code, detail="No se pudieron obtener los artistas")
-
-    top_artists = res_artists.json().get("items", [])
-    generos_frecuentes = []
-
-    for artist in top_artists:
-        for g in artist.get("genres", []):
-            g_lower = g.lower()
-            if g_lower not in generos_frecuentes:
-                generos_frecuentes.append(g_lower)
-        if len(generos_frecuentes) >= 5:
-            break
-
-    if not generos_frecuentes:
-        raise HTTPException(status_code=204, detail="No hay géneros para recomendaciones")
-
-    # Paso 2: Obtener canciones top del usuario para filtrar duplicados
-    top_tracks_res = requests.get(f"{URL_BASE}/me/top/tracks?limit=50", headers=headers)
-    canciones_top_ids = {track["id"] for track in top_tracks_res.json().get("items", [])}
-
-    # Paso 3: Buscar artistas relacionados con los géneros y canciones nuevas
-    recomendaciones = []
-
-    for genre in generos_frecuentes[:3]:
-        # Búsqueda por género
-        search_url = f"https://api.spotify.com/v1/search"
-        params = {
-            "q": f"genre:{genre}",
-            "type": "track",
-            "limit": 15
-        }
-        search_res = requests.get(search_url, headers=headers, params=params)
-        if search_res.status_code != 200:
-            continue
-
-        tracks = search_res.json().get("tracks", {}).get("items", [])
-        for track in tracks:
-            if track["id"] not in canciones_top_ids:
-                recomendaciones.append({
-                    "titulo": track["name"],
-                    "artistas": [a["name"] for a in track["artists"]],
-                    "album": track["album"]["name"],
-                    "imagen": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
-                    "id": track["id"]
-                })
-            if len(recomendaciones) >= 10:
-                break
-        if len(recomendaciones) >= 10:
-            break
-
-    if not recomendaciones:
-        raise HTTPException(status_code=204, detail="No se encontraron canciones nuevas basadas en tus géneros")
-
-    print(f"✅ {len(recomendaciones)} canciones nuevas recomendadas.")
-    return recomendaciones
+def map_to_familia(genero):
+    for familia, keywords in GENERO_FAMILIAS.items():
+        if genero.lower() in keywords:
+            return familia
+    return None  # Si no encaja, se ignora
 
 @app.get("/recommend_artists_custom")
 def recommend_artists_custom(authorization: str = Header(...)):
     token = authorization.replace("Bearer ", "")
     headers = {"Authorization": f"Bearer {token}"}
 
-    # Paso 1: obtener top artistas
-    res_artists = requests.get(f"{URL_BASE}/me/top/artists?limit=10", headers=headers)
+    # Obtener artistas top del usuario
+    res_artists = requests.get(f"{URL_BASE}/me/top/artists?limit=15", headers=headers)
     if res_artists.status_code != 200:
-        raise HTTPException(status_code=res_artists.status_code, detail="No se pudieron obtener los artistas")
+        raise HTTPException(status_code=res_artists.status_code, detail="No se pudieron obtener los artistas top")
 
     top_artists_data = res_artists.json().get("items", [])
     top_artist_ids = {a["id"] for a in top_artists_data}
-    generos_preferidos = []
 
+    # Contar familias de géneros
+    contador_familias = Counter()
     for artist in top_artists_data:
         for g in artist.get("genres", []):
-            g_lower = g.lower()
-            if g_lower not in generos_preferidos:
-                generos_preferidos.append(g_lower)
-        if len(generos_preferidos) >= 5:
-            break
+            familia = map_to_familia(g)
+            if familia:
+                contador_familias[familia] += 1
 
-    if not generos_preferidos:
-        raise HTTPException(status_code=204, detail="No se encontraron géneros en tus artistas")
+    if not contador_familias:
+        raise HTTPException(status_code=204, detail="No se encontraron familias de géneros válidas")
+
+    # Escoger las 3 familias más comunes
+    familias_preferidas = [f for f, _ in contador_familias.most_common(3)]
 
     recomendaciones = []
     vistos = set()
 
-    # Paso 2: buscar artistas por género
-    for genre in generos_preferidos[:3]:
-        search_url = f"https://api.spotify.com/v1/search"
-        params = {
-            "q": f"genre:{genre}",
-            "type": "artist",
-            "limit": 20
-        }
-        res = requests.get(search_url, headers=headers, params=params)
-        if res.status_code != 200:
-            continue
-
-        for artist in res.json().get("artists", {}).get("items", []):
-            if artist["id"] in top_artist_ids or artist["id"] in vistos:
+    for familia in familias_preferidas:
+        for genero in GENERO_FAMILIAS[familia]:
+            search_url = f"https://api.spotify.com/v1/search"
+            params = {
+                "q": f"genre:{genero}",
+                "type": "artist",
+                "limit": 15
+            }
+            res = requests.get(search_url, headers=headers, params=params)
+            if res.status_code != 200:
                 continue
-            vistos.add(artist["id"])
-            recomendaciones.append({
-                "nombre": artist["name"],
-                "id": artist["id"],
-                "imagen": artist["images"][0]["url"] if artist.get("images") else None,
-                "generos": artist.get("genres", [])
-            })
+
+            for artist in res.json().get("artists", {}).get("items", []):
+                if artist["id"] in top_artist_ids or artist["id"] in vistos:
+                    continue
+                vistos.add(artist["id"])
+                recomendaciones.append({
+                    "nombre": artist["name"],
+                    "id": artist["id"],
+                    "imagen": artist["images"][0]["url"] if artist.get("images") else None,
+                    "generos": artist.get("genres", [])
+                })
+                if len(recomendaciones) >= 10:
+                    break
             if len(recomendaciones) >= 10:
                 break
         if len(recomendaciones) >= 10:
@@ -439,6 +397,75 @@ def recommend_artists_custom(authorization: str = Header(...)):
     if not recomendaciones:
         raise HTTPException(status_code=204, detail="No se encontraron artistas nuevos")
 
+    return recomendaciones
+
+
+@app.get("/recommend_custom")
+def recommend_custom(authorization: str = Header(...)):
+    token = authorization.replace("Bearer ", "")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Paso 1: obtener top tracks
+    top_tracks_res = requests.get(f"{URL_BASE}/me/top/tracks?limit=15", headers=headers)
+    if top_tracks_res.status_code != 200:
+        raise HTTPException(status_code=top_tracks_res.status_code, detail="No se pudieron obtener las canciones top")
+
+    top_tracks = top_tracks_res.json().get("items", [])
+    contador_familias = Counter()
+    vistos = set()
+
+    for track in top_tracks:
+        for artist in track["artists"]:
+            artist_id = artist["id"]
+            res_artist = requests.get(f"{URL_BASE}/artists/{artist_id}", headers=headers)
+            if res_artist.status_code != 200:
+                continue
+            for g in res_artist.json().get("genres", []):
+                familia = map_to_familia(g)
+                if familia:
+                    contador_familias[familia] += 1
+
+    print("🎯 Familias detectadas:", contador_familias)
+
+    if not contador_familias:
+        raise HTTPException(status_code=204, detail="No se encontraron géneros útiles")
+
+    familias_preferidas = [f for f, _ in contador_familias.most_common(3)]
+
+    recomendaciones = []
+
+    for familia in familias_preferidas:
+        for genero in GENERO_FAMILIAS.get(familia, []):
+            search_url = f"{URL_BASE}/search"
+            params = {
+                "q": f"genre:{genero}",
+                "type": "track",
+                "limit": 15
+            }
+            res = requests.get(search_url, headers=headers, params=params)
+            if res.status_code != 200:
+                continue
+            for track in res.json().get("tracks", {}).get("items", []):
+                if track["id"] in vistos:
+                    continue
+                vistos.add(track["id"])
+                recomendaciones.append({
+                    "titulo": track["name"],
+                    "artistas": [a["name"] for a in track["artists"]],
+                    "imagen": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
+                    "id": track["id"]
+                })
+                if len(recomendaciones) >= 10:
+                    break
+            if len(recomendaciones) >= 10:
+                break
+        if len(recomendaciones) >= 10:
+            break
+
+    if not recomendaciones:
+        raise HTTPException(status_code=204, detail="No se encontraron canciones nuevas")
+
+    print(f"✅ Se encontraron {len(recomendaciones)} canciones nuevas")
     return recomendaciones
 
 
