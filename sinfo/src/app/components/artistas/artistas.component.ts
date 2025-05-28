@@ -19,9 +19,14 @@ export class ArtistasComponent implements OnInit {
 
   topArtists: any[] = [];
   filtrados: any[] = [];
+  paginados: any[] = [];
   nombre: string = '';
   generoFiltro: string = '';
   generosDisponibles: string[] = [];
+
+  paginaActual: number = 1;
+  artistasPorPagina: number = 10;
+  totalPaginas: number = 1;
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -32,10 +37,11 @@ export class ArtistasComponent implements OnInit {
       return;
     }
 
-    this.spotifyService.getTopArtists(token, 20).subscribe({
+    this.spotifyService.getTopArtists(token, 50).subscribe({
       next: (res) => {
         this.topArtists = res;
         this.filtrados = res;
+        this.actualizarPaginacion();
 
         const generos = new Set<string>();
         res.forEach((artist: any) => {
@@ -48,6 +54,7 @@ export class ArtistasComponent implements OnInit {
       error: () => {
         this.topArtists = [];
         this.filtrados = [];
+        this.paginados = [];
       }
     });
   }
@@ -60,5 +67,24 @@ export class ArtistasComponent implements OnInit {
       artist.nombre.toLowerCase().includes(term) &&
       (!genero || artist.generos?.some((g: string) => g.toLowerCase().includes(genero)))
     );
+    this.paginaActual = 1;
+    this.actualizarPaginacion();
+  }
+
+  actualizarPaginacion(): void {
+    this.totalPaginas = Math.ceil(this.filtrados.length / this.artistasPorPagina);
+    const inicio = (this.paginaActual - 1) * this.artistasPorPagina;
+    const fin = inicio + this.artistasPorPagina;
+    this.paginados = this.filtrados.slice(inicio, fin);
+  }
+
+  cambiarPagina(nuevaPagina: number): void {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas) return;
+    this.paginaActual = nuevaPagina;
+    this.actualizarPaginacion();
+  }
+
+  volver(): void {
+    this.router.navigate(['/']);
   }
 }

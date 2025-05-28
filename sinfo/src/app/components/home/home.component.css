@@ -111,3 +111,48 @@
   font-style: italic;
 }
 
+.canciones-recomendadas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.canciones-recomendadas li {
+  display: flex;
+  align-items: center;
+  background-color: #333;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.canciones-recomendadas img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 15px;
+  border-radius: 4px;
+  border: 1px solid #1DB954;
+}
+
+.canciones-recomendadas .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.canciones-recomendadas .info strong {
+  font-size: 14px;
+  color: #1DB954;
+}
+
+.canciones-recomendadas .info span {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.mensaje-vacio {
+  color: #999;
+  font-style: italic;
+  margin: 10px 0;
+}
+

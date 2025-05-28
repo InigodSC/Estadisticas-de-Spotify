@@ -1,46 +1,132 @@
 .canciones {
   padding: 20px;
   color: #1DB954;
+  background-color: #121212;
 }
 
-.canciones ul {
-  list-style: none;
-  padding: 0;
-}
-
-.canciones li {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-  background-color: #222;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.canciones img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 15px;
+.btn-atras {
+  background-color: transparent;
+  border: 1px solid #1DB954;
+  color: #1DB954;
+  padding: 6px 12px;
+  font-size: 14px;
   border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
 }
 
-.canciones .info {
-  display: flex;
-  flex-direction: column;
+.btn-atras:hover {
+  background-color: #1DB954;
+  color: black;
 }
 
 .filtros {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 15px;
 }
 
 .filtros input,
 .filtros select {
-  padding: 6px 10px;
+  padding: 8px 12px;
   border: none;
   border-radius: 4px;
-  outline: none;
+  background-color: #1e1e1e;
+  color: #fff;
   font-size: 14px;
+}
+
+.filtros input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filtros select {
+  min-width: 150px;
+}
+
+.tabla-canciones {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  border: 1px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  table-layout: fixed;
+}
+
+.tabla-canciones th,
+.tabla-canciones td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.tabla-canciones th {
+  background-color: #2a2a2a;
+  color: #1DB954;
+  font-weight: bold;
+}
+
+.tabla-canciones tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-canciones th:nth-child(1),
+.tabla-canciones td:nth-child(1) {
+  width: 25px;
+  text-align: left;
+}
+
+.tabla-canciones th:nth-child(2),
+.tabla-canciones td:nth-child(2) {
+  width: 200px;
+}
+
+.tabla-canciones th:nth-child(3),
+.tabla-canciones td:nth-child(3) {
+  width: 200px;
+}
+
+.tabla-canciones th:nth-child(4),
+.tabla-canciones td:nth-child(4) {
+  width: 250px;
+}
+
+.imagen-cancion {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.paginacion {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.paginacion button {
+  background-color: #1DB954;
+  color: black;
+  border: none;
+  padding: 8px 14px;
+  margin: 0 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.paginacion button:disabled {
+  background-color: #555;
+  cursor: default;
+  color: #aaa;
 }

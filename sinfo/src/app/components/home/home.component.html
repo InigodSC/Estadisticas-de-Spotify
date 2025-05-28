@@ -35,19 +35,25 @@
         </li>
       </ul>
     </div>
-
     <div class="chart">
-      <h3>Canciones recomendadas</h3>
-      <ul class="recent-songs">
+      <h3>Canciones recomendadas para ti</h3>
+
+      <div *ngIf="cancionesRecomendadas.length === 0" class="mensaje-vacio">
+        No se encontraron recomendaciones. Asegúrate de tener artistas con géneros definidos en tu perfil de Spotify.
+      </div>
+
+      <ul class="canciones-recomendadas" *ngIf="cancionesRecomendadas.length > 0">
         <li *ngFor="let song of cancionesRecomendadas">
-          <img [src]="song.imagen" alt="Álbum" />
-          <div class="song-info">
+          <img [src]="song.imagen" />
+          <div class="info">
             <strong>{{ song.nombre }}</strong>
             <span>{{ song.artistas?.join(', ') }}</span>
           </div>
         </li>
       </ul>
     </div>
+
+
 
     <div class="chart">
       <h3>Artistas recomendados</h3>

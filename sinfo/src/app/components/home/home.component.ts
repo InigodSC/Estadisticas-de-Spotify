@@ -49,33 +49,22 @@ export class HomeComponent implements OnInit {
         next: (res) => this.cancionesRecientes = res,
         error: () => this.cancionesRecientes = []
       });
-
-      this.spotifyService.getTopTracks(token, 1).subscribe({
-        next: (tracks) => {
-          if (tracks.length > 0 && tracks[0].id) {
-            const trackId = tracks[0].id;
-            this.spotifyService.getRecommendTracksById(token, trackId).subscribe({
-              next: (res) => this.cancionesRecomendadas = res,
-              error: () => this.cancionesRecomendadas = []
-            });
-          }
+      console.log('🧪 Token usado en smartRecommendations:', token);
+      this.spotifyService.getSmartRecommendations(token).subscribe({
+        next: (res) => {
+          this.cancionesRecomendadas = res;
+          console.log('✅ Recomendaciones recibidas:', res);
         },
-        error: () => this.cancionesRecomendadas = []
+        error: (err) => {
+          if (err.status === 204) {
+            console.warn('⚠️ No hay géneros válidos para generar recomendaciones');
+          } else {
+            console.error('❌ Error al obtener recomendaciones inteligentes:', err);
+          }
+          this.cancionesRecomendadas = [];
+        }
       });
 
-      // 2. Obtener top artista y luego recomendaciones
-      this.spotifyService.getTopArtists(token, 1).subscribe({
-        next: (artists) => {
-          if (artists.length > 0 && artists[0].id) {
-            const artistId = artists[0].id;
-            this.spotifyService.getRecommendArtistsById(token, artistId).subscribe({
-              next: (res) => this.artistasRecomendados = res,
-              error: () => this.artistasRecomendados = []
-            });
-          }
-        },
-        error: () => this.artistasRecomendados = []
-      });
     } else {
       this.haySesion = false;
       this.nombre = 'Invitado';

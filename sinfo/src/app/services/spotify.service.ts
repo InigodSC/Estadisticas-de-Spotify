@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpotifyService {
-                            //http://81.34.225.171:15705
+  //http://81.34.225.171:15705
   private readonly baseUrl = 'http://localhost:8888';
   constructor(private http: HttpClient) { }
 
@@ -31,6 +31,15 @@ export class SpotifyService {
   getTopTracks(token: string, n: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/top_tracks/${token}?limit=${n}`);
   }
+  getTopTracksRange(token: string, limit: number, timeRange: string = 'long_term') {
+  return this.http.get<any[]>(`${this.baseUrl}/top_tracks/${token}`, {
+    params: {
+      limit: limit.toString(),
+      time_range: timeRange
+    }
+  });
+}
+
   getRecentTracks(token: string, n: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/recent_tracks/${token}?limit=${n}`);
   }
@@ -39,6 +48,13 @@ export class SpotifyService {
   }
   getRecommendArtistsById(token: string, artistId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/recommend_artists/${token}/${artistId}`);
+  }
+  getSmartRecommendations(token: string): Observable<any[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<any[]>(`${this.baseUrl}/recommend_tracks_smart`, { headers });
   }
   getToken(): Observable<any> {
     return this.http.get(`${this.baseUrl}/token`);
