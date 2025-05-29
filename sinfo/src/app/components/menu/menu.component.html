@@ -1,5 +1,14 @@
 <div class="menu-container">
-  <button class="close-button" (click)="close()">✖</button>
+  <div class="perfil">
+    <button class="close-button" (click)="close()">✖</button>
+    <!-- Imagen de perfil (fuera del ul) -->
+    <div class="profile-container" (click)="irAlPerfil()">
+      <img [src]="foto" alt="foto perfil">
+      <div class="overlay">Ir al perfil</div>
+    </div>
+    <h2>{{ nombre }}</h2>
+  </div>
+  <!-- Menú -->
   <ul>
     <li (click)="goToArtists()">Artistas</li>
     <li (click)="goToSongs()">Canciones</li>
