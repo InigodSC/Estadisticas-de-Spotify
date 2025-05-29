@@ -1,5 +1,5 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, inject, OnInit, Output, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { SpotifyService } from '../../services/spotify.service';
 
@@ -10,8 +10,9 @@ import { SpotifyService } from '../../services/spotify.service';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit{
   private spotifyService = inject(SpotifyService);
+  private platformId = inject(PLATFORM_ID);
 
   nombre:string='';
   foto:string='';
@@ -20,6 +21,23 @@ export class MenuComponent {
 
   constructor(private router: Router) {}
 
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.spotifyService.getUserPic(token).subscribe({
+      next:(res)=>this.foto = res.url,
+      error:()=>this.foto = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'
+    });
+    this.spotifyService.getUserName(token).subscribe({
+      next:(res)=>this.nombre = res.nombre,
+      error:()=>this.nombre = 'desconocido'
+    })
+  }
   goToArtists(): void {
     this.router.navigate(['/artistas']);
     this.cerrarMenu.emit();
@@ -32,5 +50,8 @@ export class MenuComponent {
 
   close(): void {
     this.cerrarMenu.emit();
+  }
+  irAlPerfil():void{
+    this.router.navigate(['/perfil'])
   }
 }
