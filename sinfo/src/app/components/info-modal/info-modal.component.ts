@@ -26,4 +26,10 @@ export class InfoModalComponent {
   get artistNames(): string {
     return this.data?.artists?.map((a: any) => a.name).join(", ") ?? "";
   }
+  openInNewTab(): void {
+    const url = this.getSpotifyLink();
+    if (url) {
+      window.open(url, "_blank", "noopener");
+    }
+  }
 }
