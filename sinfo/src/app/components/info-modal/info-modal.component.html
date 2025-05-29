@@ -19,5 +19,5 @@
     <p><strong>Popularidad:</strong> {{ data?.popularity }}</p>
   </ng-container>
 
-  <a *ngIf="getSpotifyLink()" [href]="getSpotifyLink()" target="_blank" rel="noopener">Abrir en Spotify</a>
+  <button class="a" *ngIf="getSpotifyLink()" (click)="openInNewTab()">Abrir en Spotify</button>
 </div>
