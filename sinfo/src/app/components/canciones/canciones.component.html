@@ -1,0 +1,57 @@
+<div class="canciones">
+  <app-info-modal
+  [visible]="showModal"
+  [data]="selectedItem"
+  [type]="selectedType"
+  (click)="showModal = false">
+</app-info-modal>
+
+  <button class="btn-atras" (click)="volver()">← Volver</button>
+  <h2>Top Canciones más escuchadas</h2>
+
+  <div class="filtros">
+    <input type="text" placeholder="Buscar por nombre" [(ngModel)]="nombreFiltro" (input)="filtrarCanciones()" />
+
+    <select [(ngModel)]="generoFiltro" (change)="filtrarCanciones()" [disabled]="generosDisponibles.length === 0">
+      <option value="">Todos los géneros</option>
+      <option *ngFor="let genero of generosDisponibles" [value]="genero">{{ genero }}</option>
+    </select>
+
+    <small *ngIf="generosDisponibles.length === 0" style="color: #aaa;">
+      No se detectaron géneros para este período.
+    </small>
+
+    <select [(ngModel)]="periodo" (change)="actualizarCanciones()">
+      <option value="long_term">Últimos años</option>
+      <option value="medium_term">Últimos meses</option>
+      <option value="short_term">Últimas semanas</option>
+    </select>
+  </div>
+
+  <div *ngIf="paginadas.length === 0">No hay canciones disponibles.</div>
+
+  <table class="tabla-canciones" *ngIf="paginadas.length > 0">
+    <thead>
+      <tr>
+        <th>Portada</th>
+        <th>Título</th>
+        <th>Artistas</th>
+        <th>Álbum</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let song of paginadas" (click)="openSongModal(song)">
+        <td><img [src]="song.imagen" alt="Portada del álbum" class="imagen-cancion" /></td>
+        <td title="{{ song.titulo }}">{{ song.titulo }}</td>
+        <td title="{{ song.artistas.join(', ') }}">{{ song.artistas.join(', ') }}</td>
+        <td title="{{ song.album }}">{{ song.album }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="paginacion" *ngIf="totalPaginas > 1">
+    <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+    <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+  </div>
+</div>
