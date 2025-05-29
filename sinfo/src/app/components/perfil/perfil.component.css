@@ -43,3 +43,21 @@ button {
 button:hover {
   background-color: #169d46;
 }
+.btn-atras {
+  background-color: transparent;
+  border: 1px solid #1DB954;
+  color: #1DB954;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.btn-atras:hover {
+  background-color: #1DB954;
+  color: black;
+}
+.boton{
+  margin-left: 1%;
+}
