@@ -1,0 +1,43 @@
+<div class="artistas">
+  <app-info-modal
+  [visible]="showModal"
+  [data]="selectedItem"
+  [type]="selectedType"
+  (click)="showModal = false">
+</app-info-modal>
+  <button class="btn-atras" (click)="volver()">← Volver</button>
+  <h2>Top Artistas o Grupos más escuchados</h2>
+
+  <div class="buscar">
+    <input type="text" [(ngModel)]="nombre" placeholder="Buscar artista" (input)="onSearch()" />
+    <select [(ngModel)]="generoFiltro" (change)="onSearch()">
+      <option value="">Todos los géneros</option>
+      <option *ngFor="let genero of generosDisponibles" [value]="genero">{{ genero }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="paginados.length === 0">No hay resultados.</div>
+
+  <table class="tabla-artistas" *ngIf="paginados.length > 0">
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Nombre</th>
+        <th>Géneros</th>
+      </tr> 
+    </thead>
+    <tbody>
+      <tr *ngFor="let artist of paginados" (click)="openArtistModal(artist)">
+        <td><img [src]="artist.imagen" alt="Imagen del artista" class="imagen-artista" /></td>
+        <td>{{ artist.nombre }}</td>
+        <td>{{ artist.generos?.join(', ') }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="paginacion" *ngIf="totalPaginas > 1">
+    <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+    <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+  </div>
+</div>

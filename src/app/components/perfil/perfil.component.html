@@ -1,0 +1,13 @@
+<div class="perfil-container">
+  <img [src]="foto" alt="Foto de perfil">
+
+  <h1>{{ nombre }}</h1>
+
+  <ul class="info-list">
+    <li><strong>Correo:</strong> {{ email }}</li>
+    <li><strong>País:</strong> {{ country }}</li>
+    <li><strong>Seguidores:</strong> {{ followers }}</li>
+  </ul>
+
+  <button (click)="cerrarSesion()">Cerrar sesión</button>
+</div>
