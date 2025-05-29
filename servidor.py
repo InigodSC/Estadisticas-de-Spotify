@@ -264,7 +264,8 @@ def get_recent_tracks(acs_tkn, limit: int = Query(10, ge=1, le=50)):
             "artistas": [artist["name"] for artist in track["artists"]],
             "album": track["album"]["name"],
             "imagen": track["album"]["images"][0]["url"] if track["album"]["images"] else None,
-            "reproducido_en": item["played_at"]
+            "reproducido_en": item["played_at"],
+            "id": track["id"]
         })
 
     return tracks
@@ -468,6 +469,46 @@ def recommend_custom(authorization: str = Header(...)):
     print(f"✅ Se encontraron {len(recomendaciones)} canciones nuevas")
     return recomendaciones
 
+@app.get("/artist_info/{acs_tkn}/{artist_id}")
+def get_artist_info(acs_tkn: str, artist_id: str):
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
+    url = f"{URL_BASE}/artists/{artist_id}"
+    res = requests.get(url, headers=headers)
+
+    if res.status_code != 200:
+        raise HTTPException(status_code=res.status_code, detail="No se pudo obtener información del artista")
+
+    data = res.json()
+    return {
+        "nombre": data.get("name"),
+        "imagen": data["images"][0]["url"] if data.get("images") else None,
+        "generos": data.get("genres", []),
+        "seguidores": data.get("followers", {}).get("total"),
+        "popularidad": data.get("popularity"),
+        "spotify_url": data.get("external_urls", {}).get("spotify")
+    }
+
+@app.get("/track_info/{acs_tkn}/{track_id}")
+def get_track_info(acs_tkn: str, track_id: str):
+    headers = {"Authorization": f"Bearer {acs_tkn}"}
+    url = f"{URL_BASE}/tracks/{track_id}"
+    res = requests.get(url, headers=headers)
+
+    if res.status_code != 200:
+        raise HTTPException(status_code=res.status_code, detail="No se pudo obtener información de la canción")
+
+    data = res.json()
+    return {
+        "name": data.get("name"),
+        "images": data["album"]["images"],
+        "album": {
+            "name": data["album"]["name"],
+        },
+        "artists": data.get("artists"),
+        "duration_ms": data.get("duration_ms"),
+        "popularity": data.get("popularity"),
+        "external_urls": data.get("external_urls")
+    }
 
 #############MAIN#############
 
