@@ -30,6 +30,9 @@
   <div class="top-charts">
     <div class="chart">
       <h3>Canciones más recientes</h3>
+      <div *ngIf="cancionesRecientes.length === 0" class="mensaje-vacio">
+        No se han encontrado canciones recientes.
+      </div>
       <ul class="recent-songs">
         <li *ngFor="let song of cancionesRecientes" (click)="openModal(song, 'song')">
           <img [src]="song.imagen" alt="Álbum" />
@@ -60,6 +63,9 @@
 
     <div class="chart">
       <h3>Artistas recomendados</h3>
+      <div *ngIf="artistasRecomendados.length === 0" class="mensaje-vacio">
+        No hay recomendaciones personalizadas disponibles por ahora.
+      </div>
       <ul class="recent-songs">
         <li *ngFor="let artist of artistasRecomendados" (click)="openModal(artist, 'artist')">
           <img [src]="
