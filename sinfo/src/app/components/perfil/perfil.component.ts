@@ -61,4 +61,7 @@ export class PerfilComponent implements OnInit {
     localStorage.removeItem('access_token');
     this.router.navigate(['/login']);
   }
+  volver(): void {
+    this.router.navigate(["/"]);
+  }
 }
