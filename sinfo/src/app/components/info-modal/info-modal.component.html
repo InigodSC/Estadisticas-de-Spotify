@@ -8,16 +8,27 @@
 
   <ng-container *ngIf="type === 'artist'">
     <p><strong>Seguidores:</strong> {{ data?.followers?.total }}</p>
-    <p><strong>Géneros:</strong> {{ data?.genres?.join(', ') }}</p>
-    <p><strong>Popularidad:</strong> {{ data?.popularity }}</p>
+    <p><strong>Géneros:</strong> {{ data?.genres?.join(", ") }}</p>
+    <p><strong>Popularidad:</strong> {{ data?.popularity }}/100</p>
   </ng-container>
 
   <ng-container *ngIf="type === 'song'">
     <p><strong>Álbum:</strong> {{ data?.album?.name }}</p>
     <p><strong>Artista(s):</strong> {{ artistNames }}</p>
-    <p><strong>Duración:</strong> {{ data?.duration_ms / 1000 | number: '1.0-0' }} segundos</p>
-    <p><strong>Popularidad:</strong> {{ data?.popularity }}</p>
+    <p>
+      <strong>Duración:</strong>
+      {{ data?.duration_ms / 1000 | number : "1.0-0" }} segundos
+    </p>
+    <p><strong>Popularidad:</strong> {{ data?.popularity }}/100</p>
+    <p *ngIf="type === 'song'">
+      <strong>DEBUG preview_url:</strong> {{ data?.preview_url }}
+    </p>
+    <p *ngIf="data.preview_url">
+      <strong>Vista previa:</strong>
+      <audio [src]="data.preview_url" controls></audio>
+    </p>
   </ng-container>
-
-  <button class="a" *ngIf="getSpotifyLink()" (click)="openInNewTab()">Abrir en Spotify</button>
+  <button class="a" *ngIf="getSpotifyLink()" (click)="openInNewTab()">
+    Abrir en Spotify
+  </button>
 </div>

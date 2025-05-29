@@ -24,8 +24,9 @@ export class InfoModalComponent {
     return this.data?.external_urls?.spotify ?? null;
   }
   get artistNames(): string {
-    return this.data?.artists?.map((a: any) => a.name).join(", ") ?? "";
+    return this.data?.artists?.join(", ") ?? "";
   }
+
   openInNewTab(): void {
     const url = this.getSpotifyLink();
     if (url) {

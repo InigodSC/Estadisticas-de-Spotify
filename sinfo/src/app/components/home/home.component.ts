@@ -110,32 +110,41 @@ export class HomeComponent implements OnInit {
     const token = this.token;
 
     if (type === "artist") {
-      this.spotifyService.getArtistInfo(token,item.id).subscribe({
-          next: (res) => {
-            this.selectedItem = {
-              name: res.nombre,
-              images: res.imagen ? [{ url: res.imagen }] : [],
-              genres: res.generos,
-              followers: { total: res.seguidores },
-              popularity: res.popularidad,
-              external_urls: { spotify: res.spotify_url },
-            };
-            this.selectedType = "artist";
-            this.showModal = true;
-          },
-          error: (err) =>
-            console.error("Error al obtener información del artista:", err),
-        });
+      this.spotifyService.getArtistInfo(token, item.id).subscribe({
+        next: (res) => {
+          this.selectedItem = {
+            name: res.nombre,
+            images: res.imagen ? [{ url: res.imagen }] : [],
+            genres: res.generos,
+            followers: { total: res.seguidores },
+            popularity: res.popularidad,
+            external_urls: { spotify: res.spotify_url },
+          };
+          this.selectedType = "artist";
+          this.showModal = true;
+        },
+        error: (err) =>
+          console.error("Error al obtener información del artista:", err),
+      });
     } else if (type === "song") {
-        this.spotifyService.getTrackInfo(token,item.id).subscribe({
-          next: (res) => {
-            this.selectedItem = res;
-            this.selectedType = "song";
-            this.showModal = true;
-          },
-          error: (err) =>
-            console.error("Error al obtener información de la canción:", err),
-        });
+      this.spotifyService.getTrackInfo(token, item.id).subscribe({
+        next: (res) => {
+          this.selectedItem = {
+            name: res.name,
+            images: res.images || [],
+            album: { name: res.album?.name || "No disponible" },
+            artists: res.artists?.map((a: any) => a.name),
+            duration_ms: res.duration_ms,
+            popularity: res.popularity,
+            external_urls: { spotify: res.external_urls?.spotify },
+            preview_url: res.preview_url
+          };
+          this.selectedType = "song";
+          this.showModal = true;
+        },
+        error: (err) =>
+          console.error("Error al obtener información de la canción:", err),
+      });
     }
   }
 }

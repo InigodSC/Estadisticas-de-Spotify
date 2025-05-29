@@ -507,8 +507,10 @@ def get_track_info(acs_tkn: str, track_id: str):
         "artists": data.get("artists"),
         "duration_ms": data.get("duration_ms"),
         "popularity": data.get("popularity"),
-        "external_urls": data.get("external_urls")
+        "external_urls": data.get("external_urls"),
+        "preview_url": data.get("preview_url")
     }
+
 
 #############MAIN#############
 
