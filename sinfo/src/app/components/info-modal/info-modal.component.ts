@@ -106,7 +106,9 @@ export class InfoModalComponent implements OnChanges {
   }
 
   get artistNames(): string {
-    return this.data?.artists?.join(", ") ?? "";
+    return Array.isArray(this.data?.artists)
+      ? this.data.artists.map((a: any) => a.name ?? a).join(", ")
+      : "";
   }
 
   openInNewTab(): void {

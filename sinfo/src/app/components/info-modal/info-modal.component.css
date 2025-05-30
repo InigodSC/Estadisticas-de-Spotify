@@ -43,13 +43,23 @@
   background: none;
   color: greenyellow;
   border: none;
-  padding: 0;
+  padding: 5px;
   font: inherit;
   cursor: pointer;
   text-decoration: underline;
 }
+.preview-audio {
+  margin-top: 1rem;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
 .preview-audio audio {
   width: 100%;
-  margin-top: 1rem;
+  outline: none;
+  filter: brightness(1.1);
 }
 
