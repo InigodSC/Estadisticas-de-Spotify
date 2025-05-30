@@ -20,8 +20,11 @@
   z-index: 1001;
   max-width: 500px;
   width: 90%;
+  max-height: 90vh; /* 👈 limita el alto */
+  overflow-y: auto;  /* 👈 permite scroll interno */
   box-shadow: 0 0 15px rgba(0,0,0,0.8);
 }
+
 
 .modal-content img {
   width: 100%;
