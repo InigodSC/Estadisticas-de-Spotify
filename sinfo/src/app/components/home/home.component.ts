@@ -6,7 +6,7 @@ import { PLATFORM_ID } from "@angular/core";
 import { MenuComponent } from "../menu/menu.component";
 import { OpcionesUsuarioComponent } from "../opciones-usuario/opciones-usuario.component";
 import { InfoModalComponent } from "../info-modal/info-modal.component";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-home",
@@ -107,10 +107,8 @@ export class HomeComponent implements OnInit {
   }
 
   openModal(item: any, type: "song" | "artist") {
-    const token = this.token;
-
     if (type === "artist") {
-      this.spotifyService.getArtistInfo(token, item.id).subscribe({
+      this.spotifyService.getArtistInfo(this.token, item.id).subscribe({
         next: (res) => {
           this.selectedItem = {
             name: res.nombre,
@@ -127,7 +125,7 @@ export class HomeComponent implements OnInit {
           console.error("Error al obtener información del artista:", err),
       });
     } else if (type === "song") {
-      this.spotifyService.getTrackInfo(token, item.id).subscribe({
+      this.spotifyService.getTrackInfo(this.token, item.id).subscribe({
         next: (res) => {
           this.selectedItem = {
             name: res.name,
@@ -137,7 +135,7 @@ export class HomeComponent implements OnInit {
             duration_ms: res.duration_ms,
             popularity: res.popularity,
             external_urls: { spotify: res.external_urls?.spotify },
-            preview_url: res.preview_url
+            preview_url: res.preview_url,
           };
           this.selectedType = "song";
           this.showModal = true;

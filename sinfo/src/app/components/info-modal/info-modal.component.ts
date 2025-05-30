@@ -23,6 +23,7 @@ export class InfoModalComponent {
   getSpotifyLink(): string | null {
     return this.data?.external_urls?.spotify ?? null;
   }
+
   get artistNames(): string {
     return this.data?.artists?.join(", ") ?? "";
   }

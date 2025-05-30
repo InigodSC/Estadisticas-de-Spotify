@@ -20,13 +20,6 @@
       {{ data?.duration_ms / 1000 | number : "1.0-0" }} segundos
     </p>
     <p><strong>Popularidad:</strong> {{ data?.popularity }}/100</p>
-    <p *ngIf="type === 'song'">
-      <strong>DEBUG preview_url:</strong> {{ data?.preview_url }}
-    </p>
-    <p *ngIf="data.preview_url">
-      <strong>Vista previa:</strong>
-      <audio [src]="data.preview_url" controls></audio>
-    </p>
   </ng-container>
   <button class="a" *ngIf="getSpotifyLink()" (click)="openInNewTab()">
     Abrir en Spotify
