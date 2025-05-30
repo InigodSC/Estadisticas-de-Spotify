@@ -23,6 +23,8 @@
   max-height: 90vh; /* 👈 limita el alto */
   overflow-y: auto;  /* 👈 permite scroll interno */
   box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  max-height: 90vh;         /* altura máxima relativa a la pantalla */
+  overflow-y: auto;
 }
 
 
