@@ -4,22 +4,22 @@ import {
   BrowserModule,
   EVENT_MANAGER_PLUGINS,
   EventManagerPlugin
-} from "./chunk-LTLABGG2.js";
-import {
-  HTTP_ROOT_INTERCEPTOR_FNS
-} from "./chunk-D6OAEE7N.js";
+} from "./chunk-NLNZY2MI.js";
 import {
   NullViewportScroller,
   PlatformLocation,
   ViewportScroller,
   getDOM,
   setRootDomAdapter
-} from "./chunk-XKU4W7O3.js";
+} from "./chunk-XZIY4MOL.js";
+import {
+  HTTP_ROOT_INTERCEPTOR_FNS
+} from "./chunk-TSDW7S4V.js";
 import {
   DOCUMENT,
   PLATFORM_SERVER_ID,
   XhrFactory
-} from "./chunk-UMQWUUBM.js";
+} from "./chunk-POUHVWWY.js";
 import {
   ALLOW_MULTIPLE_PLATFORMS,
   APP_ID,
@@ -45,7 +45,6 @@ import {
   inject,
   makeEnvironmentProviders,
   platformCore,
-  require_cjs,
   setClassMetadata,
   setDocument,
   startMeasuring,
@@ -54,7 +53,10 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-PXXRCHXC.js";
+} from "./chunk-SWIVHK54.js";
+import {
+  require_cjs
+} from "./chunk-AQYIT73X.js";
 import {
   __async,
   __toESM
@@ -16838,4 +16840,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-AHD6W5EK.js.map
+//# sourceMappingURL=chunk-LAYBTWCC.js.map

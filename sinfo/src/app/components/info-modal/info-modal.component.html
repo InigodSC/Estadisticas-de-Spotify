@@ -20,6 +20,14 @@
       {{ data?.duration_ms / 1000 | number : "1.0-0" }} segundos
     </p>
     <p><strong>Popularidad:</strong> {{ data?.popularity }}/100</p>
+    <!-- Solo muestra si hay URL válida -->
+    <div *ngIf="previewUrl" class="preview-audio">
+      <p><strong>Adelanto con Deezer:</strong></p>
+      <audio
+        [src]="sanitizer.bypassSecurityTrustUrl(previewUrl)"
+        controls
+      ></audio>
+    </div>
   </ng-container>
   <button class="a" *ngIf="getSpotifyLink()" (click)="openInNewTab()">
     Abrir en Spotify

@@ -18,10 +18,11 @@
 <app-opciones-usuario *ngIf="mostrarOpciones" />
 <app-info-modal
   [visible]="showModal"
-  [data]="selectedItem"
   [type]="selectedType"
-  (click)="showModal = false">
-</app-info-modal>
+  [data]="selectedItem"
+  (click)="showModal = false"
+></app-info-modal>
+
 <div class="contenido-wrapper">
   <div class="a">
     <h2>Resumen de {{ nombre }}</h2>

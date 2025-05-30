@@ -62,7 +62,10 @@ export class HomeComponent implements OnInit {
       });
 
       this.spotifyService.getRecentTracks(token, 10).subscribe({
-        next: (res) => (this.cancionesRecientes = res),
+        next: (res) => {
+          (this.cancionesRecientes = res),
+            console.log("📻 cancionesRecientes crudas:", res);
+        },
         error: () => (this.cancionesRecientes = []),
       });
 
@@ -124,24 +127,42 @@ export class HomeComponent implements OnInit {
         error: (err) =>
           console.error("Error al obtener información del artista:", err),
       });
-    } else if (type === "song") {
-      this.spotifyService.getTrackInfo(this.token, item.id).subscribe({
+    }
+
+    if (type === "song") {
+      const songId = item.id;
+
+      if (!songId) {
+        console.warn("❌ La canción no tiene ID:", item);
+        return;
+      }
+
+      console.log("🧪 ID recibido para buscar track:", songId);
+
+      this.spotifyService.getTrackInfo(this.token, songId).subscribe({
         next: (res) => {
-          this.selectedItem = {
-            name: res.name,
-            images: res.images || [],
-            album: { name: res.album?.name || "No disponible" },
-            artists: res.artists?.map((a: any) => a.name),
-            duration_ms: res.duration_ms,
-            popularity: res.popularity,
-            external_urls: { spotify: res.external_urls?.spotify },
-            preview_url: res.preview_url,
-          };
-          this.selectedType = "song";
-          this.showModal = true;
+          console.log("🔄 Track info recibida de servidor:", res);
+
+          this.selectedItem = null; // fuerza cambio de referencia
+          setTimeout(() => {
+            this.selectedItem = {
+              name: res.name,
+              images: res.images || [],
+              album: { name: res.album?.name || "No disponible" },
+              artists: res.artists?.map((a: any) => a.name),
+              duration_ms: res.duration_ms,
+              popularity: res.popularity,
+              external_urls: { spotify: res.external_urls?.spotify },
+              preview_url: res.preview_url,
+            };
+
+            this.selectedType = "song";
+            this.showModal = true;
+          }, 0);
         },
-        error: (err) =>
-          console.error("Error al obtener información de la canción:", err),
+        error: (err) => {
+          console.error("❌ Error al obtener información de la canción:", err);
+        },
       });
     }
   }
