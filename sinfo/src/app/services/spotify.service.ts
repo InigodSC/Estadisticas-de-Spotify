@@ -65,13 +65,16 @@ export class SpotifyService {
       `${this.baseUrl}/recommend_artists/${token}/${artistId}`
     );
   }
-  getCustomRecommendations(token: string): Observable<any[]> {
+  getCustomRecommendations(
+    token: string
+  ): Observable<{ mensaje: string; recomendaciones: any[] }> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.get<any[]>(`${this.baseUrl}/recommend_custom`, {
-      headers,
-    });
+    return this.http.get<{ mensaje: string; recomendaciones: any[] }>(
+      `${this.baseUrl}/recommend_custom`,
+      { headers }
+    );
   }
   getCustomArtistRecommendations(token: string): Observable<any[]> {
     const headers = new HttpHeaders({
@@ -86,6 +89,31 @@ export class SpotifyService {
   }
   getTrackInfo(token: string, artistId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/track_info/${token}/${artistId}`);
+  }
+  getWrapStatsByRange(
+    token: string,
+    range: "short_term" | "medium_term" | "long_term"
+  ) {
+    return this.http.get<any>(`${this.baseUrl}/wrap_stats/${range}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+  getWrapStatsLong(token: string) {
+    return this.http.get<any>(`${this.baseUrl}/wrap_stats_long`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  getWrapStatsMedium(token: string) {
+    return this.http.get<any>(`${this.baseUrl}/wrap_stats_medium`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  getWrapStatsShort(token: string) {
+    return this.http.get<any>(`${this.baseUrl}/wrap_stats_short`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   }
   getToken(): Observable<any> {
     return this.http.get(`${this.baseUrl}/token`);

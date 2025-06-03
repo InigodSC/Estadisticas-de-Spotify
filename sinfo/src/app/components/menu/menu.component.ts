@@ -47,7 +47,10 @@ export class MenuComponent implements OnInit{
     this.router.navigate(['/canciones']);
     this.cerrarMenu.emit();
   }
-
+  goToWrap():void{
+    this.router.navigate(['/wrap']);
+    this.cerrarMenu.emit();
+  }
   close(): void {
     this.cerrarMenu.emit();
   }

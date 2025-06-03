@@ -5,6 +5,7 @@ import { CancionesComponent } from './components/canciones/canciones.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { LoginComponent } from './components/login/login.component';
 import { CallbackComponent } from './components/callback/callback.component';
+import { WrapComponent } from './components/wrap/wrap.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,5 +14,6 @@ export const routes: Routes = [
   { path: 'perfil', component: PerfilComponent },
   { path: 'login', component: LoginComponent },
   { path: 'callback', component: CallbackComponent },
+  { path: 'wrap', component: WrapComponent },
   { path: '**', redirectTo: '' }
 ];

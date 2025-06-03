@@ -71,10 +71,10 @@ export class HomeComponent implements OnInit {
 
       this.spotifyService.getCustomRecommendations(token).subscribe({
         next: (res) => {
-          this.cancionesPersonalizadas = res;
+          this.cancionesPersonalizadas = res.recomendaciones; // 👈 debe ser así
         },
         error: (err) => {
-          this.cancionesPersonalizadas = [];
+          console.error("Error cargando recomendaciones personalizadas:", err);
         },
       });
 

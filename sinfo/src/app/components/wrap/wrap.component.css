@@ -1,0 +1,110 @@
+.wrap-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  color: #fff;
+  background-color: #121212;
+  border-radius: 15px;
+  position: relative;
+  max-width: 700px;
+  margin: auto;
+  overflow: hidden;
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+
+.slide {
+  flex-shrink: 0;
+  width: 100%;
+  display: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease;
+}
+
+.slide.active {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+.generos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.generos li {
+  margin-bottom: 20px;
+}
+
+.genero {
+  font-weight: bold;
+}
+
+.porcentaje {
+  float: right;
+  color: #1DB954;
+}
+
+.barra {
+  background-color: #333;
+  height: 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.relleno {
+  height: 100%;
+  background-color: #1DB954;
+  border-radius: 5px;
+}
+
+.controles {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.controles button {
+  background-color: #1DB954;
+  border: none;
+  color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.controles button:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+}
+
+.tiempo {
+  margin-bottom: 20px;
+}
+.btn-atras {
+  background-color: transparent;
+  border: 1px solid #1DB954;
+  color: #1DB954;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-left: 15px;
+}
+
+.btn-atras:hover {
+  background-color: #1DB954;
+  color: black;
+}

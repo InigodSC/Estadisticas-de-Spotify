@@ -1,0 +1,33 @@
+<button class="btn-atras" (click)="volver()">← Volver</button>
+<div class="wrap-container">
+  <div class="slider">
+    <div
+      class="slide"
+      *ngFor="let bloque of stats; let i = index"
+      [class.active]="i === currentSlide"
+    >
+      <h2 *ngIf="i === 0">Wrap largo plazo (50 canciones top del último año + 50 canciones recientes)</h2>
+      <h2 *ngIf="i === 1">Wrap medio plazo (50 canciones top de los últimos meses + 50 canciones recientes)</h2>
+      <h2 *ngIf="i === 2">Wrap corto plazo (50 canciones top de las últimas semanas + 50 canciones recientes)</h2>
+
+      <p class="tiempo">
+        <strong>Tiempo escuchado aproximado:</strong> {{ bloque.tiempo }} minutos
+      </p>
+
+      <ul class="generos">
+        <li *ngFor="let g of bloque.generos">
+          <span class="genero">{{ g.nombre }}</span>
+          <span class="porcentaje">{{ g.porcentaje }}%</span>
+          <div class="barra">
+            <div class="relleno" [style.width.%]="g.porcentaje"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="controles">
+    <button (click)="prevSlide()" [disabled]="currentSlide === 0">←</button>
+    <button (click)="nextSlide()" [disabled]="currentSlide === stats.length - 1">→</button>
+  </div>
+</div>

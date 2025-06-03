@@ -1,3 +1,4 @@
+import asyncio
 import fastapi
 import datetime as dt
 import uvicorn
@@ -7,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests, base64, urllib.parse
 import webbrowser
 from collections import Counter
+import httpx  # ✅ Asegúrate de tener esto arriba en tus imports
+
 
 app = fastapi.FastAPI()
 
@@ -400,62 +403,96 @@ def recommend_artists_custom(authorization: str = Header(...)):
 
     return recomendaciones
 
-
 @app.get("/recommend_custom")
 def recommend_custom(authorization: str = Header(...)):
     token = authorization.replace("Bearer ", "")
     headers = {"Authorization": f"Bearer {token}"}
 
-    # Paso 1: obtener top tracks
-    top_tracks_res = requests.get(f"{URL_BASE}/me/top/tracks?limit=15", headers=headers)
-    if top_tracks_res.status_code != 200:
-        raise HTTPException(status_code=top_tracks_res.status_code, detail="No se pudieron obtener las canciones top")
+    # 🔁 Paso 1: obtener top tracks de los 3 periodos
+    all_tracks = []
+    seen_ids = set()
+    for time_range in ["short_term", "medium_term", "long_term"]:
+        res = requests.get(
+            f"{URL_BASE}/me/top/tracks?limit=50&time_range={time_range}", headers=headers
+        )
+        if res.status_code == 200:
+            items = res.json().get("items", [])
+            for track in items:
+                if track["id"] not in seen_ids:
+                    all_tracks.append(track)
+                    seen_ids.add(track["id"])
 
-    top_tracks = top_tracks_res.json().get("items", [])
-    contador_familias = Counter()
-    vistos = set()
+    if not all_tracks:
+        return {
+            "mensaje": "No se encontraron canciones top en ningún periodo.",
+            "recomendaciones": [],
+        }
 
-    for track in top_tracks:
-        for artist in track["artists"]:
-            artist_id = artist["id"]
-            res_artist = requests.get(f"{URL_BASE}/artists/{artist_id}", headers=headers)
-            if res_artist.status_code != 200:
+    # 🧠 Paso 2: detectar géneros de artistas (optimizando peticiones en lotes)
+    artist_ids = {
+        artist["id"]
+        for track in all_tracks
+        for artist in track.get("artists", [])
+    }
+
+    def obtener_generos_por_familia(artist_ids, headers):
+        contador_familias = Counter()
+        artist_ids = list(artist_ids)
+
+        for i in range(0, len(artist_ids), 50):
+            ids_lote = artist_ids[i:i+50]
+            res = requests.get(
+                f"{URL_BASE}/artists",
+                headers=headers,
+                params={"ids": ",".join(ids_lote)}
+            )
+            if res.status_code != 200:
                 continue
-            for g in res_artist.json().get("genres", []):
-                familia = map_to_familia(g)
-                if familia:
-                    contador_familias[familia] += 1
 
-    print("🎯 Familias detectadas:", contador_familias)
+            for artist_data in res.json().get("artists", []):
+                for g in artist_data.get("genres", []):
+                    familia = map_to_familia(g)
+                    if familia:
+                        contador_familias[familia] += 1
+
+        return contador_familias
+
+    contador_familias = obtener_generos_por_familia(artist_ids, headers)
 
     if not contador_familias:
-        raise HTTPException(status_code=204, detail="No se encontraron géneros útiles")
+        return {
+            "mensaje": "No se encontraron géneros útiles en los artistas analizados.",
+            "recomendaciones": [],
+        }
 
     familias_preferidas = [f for f, _ in contador_familias.most_common(3)]
 
+    # 🔍 Paso 3: buscar canciones por esos géneros
     recomendaciones = []
+    vistos = set()
 
     for familia in familias_preferidas:
         for genero in GENERO_FAMILIAS.get(familia, []):
-            search_url = f"{URL_BASE}/search"
-            params = {
-                "q": f"genre:{genero}",
-                "type": "track",
-                "limit": 15
-            }
-            res = requests.get(search_url, headers=headers, params=params)
+            params = {"q": f"genre:{genero}", "type": "track", "limit": 15}
+            res = requests.get(f"{URL_BASE}/search", headers=headers, params=params)
             if res.status_code != 200:
                 continue
             for track in res.json().get("tracks", {}).get("items", []):
                 if track["id"] in vistos:
                     continue
                 vistos.add(track["id"])
-                recomendaciones.append({
-                    "titulo": track["name"],
-                    "artistas": [a["name"] for a in track["artists"]],
-                    "imagen": track["album"]["images"][0]["url"] if track["album"].get("images") else None,
-                    "id": track["id"]
-                })
+                recomendaciones.append(
+                    {
+                        "titulo": track["name"],
+                        "artistas": [a["name"] for a in track["artists"]],
+                        "imagen": (
+                            track["album"]["images"][0]["url"]
+                            if track["album"].get("images")
+                            else None
+                        ),
+                        "id": track["id"],
+                    }
+                )
                 if len(recomendaciones) >= 10:
                     break
             if len(recomendaciones) >= 10:
@@ -463,11 +500,11 @@ def recommend_custom(authorization: str = Header(...)):
         if len(recomendaciones) >= 10:
             break
 
-    if not recomendaciones:
-        raise HTTPException(status_code=204, detail="No se encontraron canciones nuevas")
+    return {
+        "mensaje": f"Se encontraron {len(recomendaciones)} canciones nuevas",
+        "recomendaciones": recomendaciones,
+    }
 
-    print(f"✅ Se encontraron {len(recomendaciones)} canciones nuevas")
-    return recomendaciones
 
 @app.get("/artist_info/{acs_tkn}/{artist_id}")
 def get_artist_info(acs_tkn: str, artist_id: str):
@@ -511,6 +548,65 @@ def get_track_info(acs_tkn: str, track_id: str):
         "preview_url": data.get("preview_url")
     }
 
+def calcular_wrap_stats(time_range: str, token: str):
+    headers = {"Authorization": f"Bearer {token}"}
+
+    top_res = requests.get(
+        f"{URL_BASE}/me/top/tracks?limit=50&time_range={time_range}", headers=headers
+    )
+    recent_res = requests.get(
+        "https://api.spotify.com/v1/me/player/recently-played?limit=50", headers=headers
+    )
+
+    if top_res.status_code != 200 or recent_res.status_code != 200:
+        raise HTTPException(status_code=400, detail="No se pudieron obtener canciones")
+
+    top_tracks = top_res.json().get("items", [])
+    recent_items = recent_res.json().get("items", [])
+    recent_tracks = [item["track"] for item in recent_items if "track" in item]
+
+    all_tracks = top_tracks + recent_tracks
+    total_duracion_ms = sum(track.get("duration_ms", 0) for track in all_tracks)
+
+    artist_ids = {
+        artist["id"] for track in all_tracks for artist in track.get("artists", [])
+    }
+
+    generos_contador = Counter()
+    for artist_id in artist_ids:
+        res = requests.get(f"{URL_BASE}/artists/{artist_id}", headers=headers)
+        if res.status_code == 200:
+            for genero in res.json().get("genres", []):
+                generos_contador[genero.lower()] += 1
+
+    total_generos = sum(generos_contador.values()) or 1
+    generos = [
+        {"nombre": g, "porcentaje": round((c / total_generos) * 100)}
+        for g, c in generos_contador.most_common(10)
+    ]
+
+    return {
+        "tiempo_escuchado_min": round(total_duracion_ms / 60000),
+        "generos": generos,
+    }
+
+
+@app.get("/wrap_stats_long")
+def get_wrap_stats_long(authorization: str = Header(...)):
+    token = authorization.replace("Bearer ", "")
+    return calcular_wrap_stats("long_term", token)
+
+
+@app.get("/wrap_stats_medium")
+def get_wrap_stats_medium(authorization: str = Header(...)):
+    token = authorization.replace("Bearer ", "")
+    return calcular_wrap_stats("medium_term", token)
+
+
+@app.get("/wrap_stats_short")
+def get_wrap_stats_short(authorization: str = Header(...)):
+    token = authorization.replace("Bearer ", "")
+    return calcular_wrap_stats("short_term", token)
 
 #############MAIN#############
 
