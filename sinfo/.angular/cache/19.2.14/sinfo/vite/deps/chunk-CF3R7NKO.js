@@ -1,7 +1,6 @@
-import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
   InjectionToken
-} from "./chunk-SWIVHK54.js";
+} from "./chunk-MTES5EJZ.js";
 
 // node_modules/@angular/common/fesm2022/xhr-BfNfxNDv.mjs
 function parseCookieValue(cookieStr, name) {
@@ -48,4 +47,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-GV22NJRN.js.map
+//# sourceMappingURL=chunk-CF3R7NKO.js.map
