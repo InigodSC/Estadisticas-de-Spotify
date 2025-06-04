@@ -568,15 +568,20 @@ def calcular_wrap_stats(time_range: str, token: str):
     all_tracks = top_tracks + recent_tracks
     total_duracion_ms = sum(track.get("duration_ms", 0) for track in all_tracks)
 
-    artist_ids = {
-        artist["id"] for track in all_tracks for artist in track.get("artists", [])
-    }
+    artist_ids = list(
+        {artist["id"] for track in all_tracks for artist in track.get("artists", [])}
+    )
 
     generos_contador = Counter()
-    for artist_id in artist_ids:
-        res = requests.get(f"{URL_BASE}/artists/{artist_id}", headers=headers)
-        if res.status_code == 200:
-            for genero in res.json().get("genres", []):
+    for i in range(0, len(artist_ids), 50):
+        batch = artist_ids[i : i + 50]
+        res = requests.get(
+            f"{URL_BASE}/artists", headers=headers, params={"ids": ",".join(batch)}
+        )
+        if res.status_code != 200:
+            continue
+        for artist in res.json().get("artists", []):
+            for genero in artist.get("genres", []):
                 generos_contador[genero.lower()] += 1
 
     total_generos = sum(generos_contador.values()) or 1
