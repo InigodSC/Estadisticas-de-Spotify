@@ -45,6 +45,7 @@
   justify-content: flex-start;
   border-radius: 5px;
   max-height: 100%;
+  animation: fadeIn 0.6s ease;
 }
 
 
@@ -63,6 +64,7 @@
   padding: 8px;
   border-radius: 5px;
   transition: background-color 0.2s;
+  animation: fadeIn 0.6s ease;
 }
 
 .recent-songs li:hover, .canciones-recomendadas li:hover {
@@ -135,4 +137,14 @@
 .chart.recomendacion-personalizada {
   border: 1px dashed #1DB954;
   box-shadow: 0 0 5px rgba(29, 185, 84, 0.3);
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
