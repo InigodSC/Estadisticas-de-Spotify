@@ -1,142 +1,135 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: black;
-  color: #1DB954;
-}
-.contenido-wrapper {
-  background-color: #121212;
-  border-radius: 15px;
+.canciones {
   padding: 20px;
-  margin: 20px;  
-}
-
-.header button {
-  background: none;
-  border: none;
   color: #1DB954;
-  font-size: 20px;
-  cursor: pointer;
-}
-.header img{
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #1DB954;
-  margin-bottom: 10px;
-}
-.top-charts {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
+  background-color: #121212;
 }
 
-.chart {
-  background-color: #222;
-  color: white;
-  width: 30%;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  border-radius: 5px;
-  max-height: 100%;
-  animation: fadeIn 0.6s ease;
-}
-
-
-.recent-songs, .canciones-recomendadas {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.recent-songs li, .canciones-recomendadas li {
-  display: flex;
-  align-items: center;
-  background-color: #333;
-  margin-bottom: 10px;
-  padding: 8px;
-  border-radius: 5px;
-  transition: background-color 0.2s;
-  animation: fadeIn 0.6s ease;
-}
-
-.recent-songs li:hover, .canciones-recomendadas li:hover {
-  background-color: #444;
-}
-
-.recent-songs img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 12px;
-}
-
-.song-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.song-info strong {
+.btn-atras {
+  background-color: transparent;
+  border: 1px solid #1DB954;
   color: #1DB954;
+  padding: 6px 12px;
   font-size: 14px;
-}
-
-.song-info span {
-  color: #ccc;
-  font-size: 12px;
-}
-.a h2 {
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-
-.recent-songs img, .canciones-recomendadas img  {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 12px;
   border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
 }
 
-.song-info span {
-  color: #ccc;
-  font-size: 12px;
-  font-style: italic;
+.btn-atras:hover {
+  background-color: #1DB954;
+  color: black;
 }
-.canciones-recomendadas .info {
+
+.filtros {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
-.canciones-recomendadas .info strong {
+.filtros input,
+.filtros select {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: #1e1e1e;
+  color: #fff;
   font-size: 14px;
+}
+
+.filtros input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filtros select {
+  min-width: 150px;
+}
+
+.tabla-canciones {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  border: 1px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  table-layout: fixed;
+  animation: fadeIn 0.6s ease;
+}
+
+.tabla-canciones th,
+.tabla-canciones td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.tabla-canciones th {
+  background-color: #2a2a2a;
   color: #1DB954;
+  font-weight: bold;
 }
 
-.canciones-recomendadas .info span {
-  font-size: 12px;
-  color: #ccc;
+.tabla-canciones tr:last-child td {
+  border-bottom: none;
 }
 
-.mensaje-vacio {
-  color: #999;
-  font-style: italic;
-  margin: 10px 0;
+.tabla-canciones th:nth-child(1),
+.tabla-canciones td:nth-child(1) {
+  width: 25px;
+  text-align: left;
 }
 
-/* Opcional: destacar la sección de recomendaciones personalizadas */
-.chart.recomendacion-personalizada {
-  border: 1px dashed #1DB954;
-  box-shadow: 0 0 5px rgba(29, 185, 84, 0.3);
+.tabla-canciones th:nth-child(2),
+.tabla-canciones td:nth-child(2) {
+  width: 200px;
+}
+
+.tabla-canciones th:nth-child(3),
+.tabla-canciones td:nth-child(3) {
+  width: 200px;
+}
+
+.tabla-canciones th:nth-child(4),
+.tabla-canciones td:nth-child(4) {
+  width: 250px;
+}
+
+.imagen-cancion {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.paginacion {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.paginacion button {
+  background-color: #1DB954;
+  color: black;
+  border: none;
+  padding: 8px 14px;
+  margin: 0 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.paginacion button:disabled {
+  background-color: #555;
+  cursor: default;
+  color: #aaa;
 }
 @keyframes fadeIn {
   from {
