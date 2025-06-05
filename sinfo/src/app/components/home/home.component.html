@@ -12,8 +12,10 @@
   </button>
 </div>
 
-<app-menu *ngIf="mostrarMenu" />
-<app-menu *ngIf="mostrarMenu" (cerrarMenu)="despligueMenu()" />
+<app-menu
+  [oculto]="!mostrarMenu"
+  (cerrarMenu)="cerrarMenu()">
+</app-menu>
 
 <app-opciones-usuario *ngIf="mostrarOpciones" />
 <app-info-modal
