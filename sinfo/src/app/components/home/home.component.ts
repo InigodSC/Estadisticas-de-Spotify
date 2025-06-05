@@ -166,4 +166,7 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+  cerrarMenu(): void {
+    this.mostrarMenu = false;
+  }
 }
