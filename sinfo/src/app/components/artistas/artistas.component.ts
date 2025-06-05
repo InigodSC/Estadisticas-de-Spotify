@@ -97,7 +97,7 @@ export class ArtistasComponent implements OnInit {
   }
 
   volver(): void {
-    this.router.navigate(["/"]);
+    this.router.navigate(["/home"]);
   }
 
   openArtistModal(artist: any) {

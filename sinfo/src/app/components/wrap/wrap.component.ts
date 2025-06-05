@@ -89,6 +89,6 @@ export class WrapComponent implements OnInit {
   }
 
   volver():void{
-    this.router.navigate(['/']);
+    this.router.navigate(['/home']);
   }
 }

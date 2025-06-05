@@ -1,0 +1,45 @@
+.intro-container {
+  height: 100vh;
+  background-color: #121212;
+  color: #1DB954;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative; /* necesario para el posicionamiento absoluto interno */
+  padding-top: 0px; /* para dejar espacio al h1 */
+}
+
+.intro-container h1 {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.intro-container img {
+  width: 500px;
+  max-width: 80%;
+  margin-bottom: 20px;
+  transition: transform 0.4s ease;
+}
+.intro-container img:hover {
+  transform: scale(1.05);
+}
+
+.intro-container button {
+  margin-top: 20px;
+  background-color: #1DB954;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.intro-container button:hover{
+  transform: scale(1.05);
+}

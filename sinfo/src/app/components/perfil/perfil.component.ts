@@ -62,6 +62,6 @@ export class PerfilComponent implements OnInit {
     this.router.navigate(['/login']);
   }
   volver(): void {
-    this.router.navigate(["/"]);
+    this.router.navigate(["/home"]);
   }
 }

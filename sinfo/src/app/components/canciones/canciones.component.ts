@@ -111,7 +111,7 @@ export class CancionesComponent implements OnInit {
   }
 
   volver(): void {
-    this.router.navigate(["/"]);
+    this.router.navigate(["/home"]);
   }
 
   openSongModal(song: any) {
