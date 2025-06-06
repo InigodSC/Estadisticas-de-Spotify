@@ -22,7 +22,7 @@ export class CallbackComponent implements OnInit {
 
     if (token) {
       localStorage.setItem('access_token', token);
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     } else {
       this.router.navigate(['/login']);
     }
